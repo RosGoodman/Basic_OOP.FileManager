@@ -1,8 +1,7 @@
 ﻿
 using FileManager.WPF.Model;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using NLog;
+using System.Windows.Input;
 
 namespace FileManager.WPF.ViewModel
 {
@@ -10,8 +9,15 @@ namespace FileManager.WPF.ViewModel
     {
         private readonly ILogger _logger;
 
+        private DirectoryControl _directoryControl;
+        private FileControl _fileControl;
+
         private DirectoryModel _currentDirectory;
         private FileModel _currentFile;
+
+        #region props
+
+        public ICommand Create { get; set; }
 
         public DirectoryModel CurrentDirectory
         {
@@ -33,9 +39,21 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        public FileManagerViewModel()
+        #endregion
+
+        public FileManagerViewModel(ILogger logger)
         {
-            
+            _logger = logger;
+            _logger.Info("Создание экземпляра класса FileManagerViewModel.");
+
+            _directoryControl = new DirectoryControl(_logger);
+            _fileControl = new FileControl(_logger);
         }
+
+        #region commands
+
+        public void Create() { }
+
+        #endregion
     }
 }

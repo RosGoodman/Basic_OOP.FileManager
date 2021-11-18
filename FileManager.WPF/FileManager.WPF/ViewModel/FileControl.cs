@@ -2,18 +2,14 @@
 using FileManager.WPF.Model;
 using NLog;
 using System;
-using System.Collections.ObjectModel;
 using System.IO;
 
 namespace FileManager.WPF.ViewModel
 {
-    internal class FileControlprivate : BaseViewModel
+    internal class FileControl : AbstrctBaseViewModel<FileModel>
     {
-        static ILogger _logger;
+        private static ILogger _logger;
         private FileInfo _fileInfo;
-        private ObservableCollection<FileModel> _files;
-
-        public ObservableCollection<FileModel> Directoryes { get => _files; }
 
         public FileControl(ILogger logger)
         {
@@ -21,7 +17,7 @@ namespace FileManager.WPF.ViewModel
             _logger.Debug("Создание экземпляра класса FileControl.");
         }
 
-        public void Create(string path)
+        public override void Create(string path)
         {
             try
             {
@@ -31,33 +27,49 @@ namespace FileManager.WPF.ViewModel
             }
             catch (Exception ex)
             {
-                _logger.Error($"{ex} - ошибка при попытке создания директории.");
+                _logger.Error($"{ex} - ошибка при попытке создания файла.");
             }
         }
 
-        public void Delete(DirectoryModel dir)
+        public override void Copy(FileModel file, string newPath)
         {
             try
             {
-                File.Delete(dir.FullPath, true);
+                _fileInfo = new FileInfo(file.FullPath);
+                if (_fileInfo.Exists)
+                    _fileInfo.CopyTo(newPath, true);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                _logger.Error($"{ex} - ошибка при попытке удаления директории.");
+                _logger.Error($"{ex} - ошибка при попытке копирования");
             }
         }
 
-        public void MoveTo(DirectoryModel dir, string newPath)
+        public override void Delete(FileModel file)
         {
             try
             {
-                _fileInfo = new FileInfo(dir.FullPath);
+                _fileInfo = new FileInfo(file.FullPath);
+                if (_fileInfo.Exists)
+                    File.Delete(file.FullPath);
+            }
+            catch(Exception ex)
+            {
+                _logger.Error($"{ex} - ошибка при попытке удаления файла");
+            }
+        }
+
+        public override void MoveTo(FileModel file, string newPath)
+        {
+            try
+            {
+                _fileInfo = new FileInfo(file.FullPath);
                 if (_fileInfo.Exists && !File.Exists(newPath))
                     _fileInfo.MoveTo(newPath);
             }
             catch (Exception ex)
             {
-                _logger.Error($"{ex} - ошибка при попытке перемещения директории.");
+                _logger.Error($"{ex} - ошибка при попытке перемещения файла.");
             }
         }
     }

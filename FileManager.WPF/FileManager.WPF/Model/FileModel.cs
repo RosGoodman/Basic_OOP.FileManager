@@ -4,32 +4,14 @@ using System.IO;
 
 namespace FileManager.WPF.Model
 {
-    internal class FileModel : IFile
+    internal class FileModel : BaseFile<FileInfo>
     {
-        private static ILogger _logger;
-        private FileInfo _fileInfo;
-
-        private string _fullPath;
-        private string _name;
-        private DirectoryModel _parent;
-
-        public string FullPath
+        public FileModel(ILogger logger, string filePath)
+            : base(logger, filePath)
         {
-            get => _fullPath;
-            private set => _fullPath = value;
         }
 
-        public FileModel(ILogger logger, string filePath, string name, DirectoryModel parent)
-        {
-            _logger = logger;
-            _logger.Info("Создание экземпляра объекта FileModel.");
-
-            _fullPath = filePath;
-            _name = name;
-            _parent = parent;
-        }
-
-        public string[] GetInfo()
+        public override string[] GetInfo()
         {
             _fileInfo = new FileInfo(_fullPath);
             string[] info = new string[4];
@@ -45,7 +27,7 @@ namespace FileManager.WPF.Model
             return info;
         }
 
-        public long GetSize()
+        public override long GetSize()
         {
             _fileInfo = new FileInfo(_fullPath);
             if (_fileInfo.Exists)
@@ -55,6 +37,13 @@ namespace FileManager.WPF.Model
             else { _logger.Error($"{_fileInfo.Exists} - файл не найден при попытке получения рего размера."); }
 
             return 0;
+        }
+
+        public override BaseFile<FileInfo> GetParent(BaseFile<FileInfo> file)
+        {
+            _fileInfo = new FileInfo(file.FullPath);
+            var parent = Directory.GetParent(_fileInfo.FullName);
+            return new BaseFile<FileInfo>(parent.FullName);
         }
     }
 }

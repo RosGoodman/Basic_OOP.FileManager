@@ -7,13 +7,15 @@ using System.IO;
 
 namespace FileManager.WPF.ViewModel
 {
-    internal class DirectoryControl : BaseViewModel
+    internal class DirectoryControl : AbstrctBaseViewModel<DirectoryModel>
     {
         private static ILogger _logger;
         private DirectoryInfo _dirInfo;
         private ObservableCollection<DirectoryModel> _directories;
+        private ObservableCollection<FileModel> _files;
 
         public ObservableCollection<DirectoryModel> Directoryes { get => _directories; }
+        public ObservableCollection<FileModel> Files { get => _files; }
 
         public DirectoryControl(ILogger logger)
         {
@@ -27,7 +29,7 @@ namespace FileManager.WPF.ViewModel
             return Directory.GetDirectories(dirName);
         }
 
-        public void Create(string path)
+        public override void Create(string path)
         {
             try
             {
@@ -41,21 +43,7 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        public void CreateSubDirectory(string subPath)
-        {
-            try
-            {
-                _dirInfo = new DirectoryInfo(subPath);
-                if (_dirInfo.Exists)
-                    _dirInfo.CreateSubdirectory(subPath);
-            }
-            catch(Exception ex)
-            {
-                _logger.Error($"{ex} - ошибка при попытке создания дочерней директории.");
-            }
-        }
-
-        public void Delete(DirectoryModel dir)
+        public override void Delete(DirectoryModel dir)
         {
             try
             {
@@ -67,7 +55,7 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        public void MoveTo(DirectoryModel dir, string newPath)
+        public override void MoveTo(DirectoryModel dir, string newPath)
         {
             try
             {
@@ -78,6 +66,36 @@ namespace FileManager.WPF.ViewModel
             catch(Exception ex)
             {
                 _logger.Error($"{ex} - ошибка при попытке перемещения директории.");
+            }
+        }
+
+        public override void Copy(DirectoryModel directory, string newDir)
+        {
+            try
+            {
+                _dirInfo = new DirectoryInfo(directory.FullPath);
+                if (_dirInfo.Exists && !Directory.Exists(newDir + _dirInfo.FullName))
+                {
+                    Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(directory.Parent.FullPath, newDir);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.Error($"{ex} - ошибка при попытке копирования директории.");
+            }
+        }
+
+        public void CreateSubDirectory(string subPath)
+        {
+            try
+            {
+                _dirInfo = new DirectoryInfo(subPath);
+                if (_dirInfo.Exists)
+                    _dirInfo.CreateSubdirectory(subPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"{ex} - ошибка при попытке создания дочерней директории.");
             }
         }
     }

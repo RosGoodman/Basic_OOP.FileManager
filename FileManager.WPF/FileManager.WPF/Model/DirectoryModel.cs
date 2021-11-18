@@ -7,49 +7,44 @@ using System.Linq;
 
 namespace FileManager.WPF.Model
 {
-    internal class DirectoryModel : IFile
+    internal class DirectoryModel : BaseFile<DirectoryInfo>
     {
-        private static ILogger _logger;
-        private DirectoryInfo _dirInfo;
+        //заменить на getParent
+        //public DirectoryModel Parent
+        //{
+        //    get => _parent;
+        //    private set => _parent = value;
+        //}
 
-        private string _fullPath;
-        private string _name;
-        private DirectoryModel _parent;
-
-        public string FullPath
+        public DirectoryModel(ILogger logger, string filePath)
+            : base(logger, filePath)
         {
-            get => _fullPath;
-            private set => _fullPath = value;
         }
 
-        public DirectoryModel(ILogger logger, string filePath, string name, DirectoryModel parent)
+        public Directory(string FilePath)
+            : base(FilePath)
         {
-            _logger = logger;
-            _logger.Info("Создание экземпляра DirectoryModel.");
 
-            _fullPath = filePath;
-            _name = name;
-            _parent = parent;
         }
 
-        public long GetSize()
+        public override long GetSize()
         {
             return SafeEnumerateFiles(_fullPath, "*.*", SearchOption.AllDirectories).Sum(n => new FileInfo(n).Length);
         }
 
-        public string[] GetInfo()
+        public override string[] GetInfo()
         {
             string[] info = new string[4];
-            _dirInfo = new DirectoryInfo(_fullPath);
+            _fileInfo = new DirectoryInfo(_fullPath);
 
-            if (_dirInfo.Exists)
+            if (_fileInfo.Exists)
             {
-                info[0] = _dirInfo.Name;
-                info[1] = _dirInfo.FullName;
-                info[2] = _dirInfo.CreationTime.ToString();
-                info[3] = _dirInfo.LastWriteTime.ToString();
+                info[0] = _fileInfo.Name;
+                info[1] = _fileInfo.FullName;
+                info[2] = _fileInfo.CreationTime.ToString();
+                info[3] = _fileInfo.LastWriteTime.ToString();
             }
-            else { _logger.Error($"{_dirInfo.Exists} - файл не найден при попытке получения информации о нем."); }
+            else { _logger.Error($"{_fileInfo.Exists} - файл не найден при попытке получения информации о нем."); }
 
             return info;
         }
