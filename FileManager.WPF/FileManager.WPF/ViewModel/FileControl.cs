@@ -22,7 +22,7 @@ namespace FileManager.WPF.ViewModel
             try
             {
                 _fileInfo = new FileInfo(path);
-                if (_fileInfo.Exists)
+                if (!_fileInfo.Exists)
                     _fileInfo.Create();
             }
             catch (Exception ex)

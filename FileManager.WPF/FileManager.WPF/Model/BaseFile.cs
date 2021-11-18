@@ -4,7 +4,7 @@ using System.IO;
 
 namespace FileManager.WPF.Model
 {
-    internal class BaseFile
+    public class BaseFile
     {
         protected internal static ILogger _logger;
         protected internal string _fullPath;

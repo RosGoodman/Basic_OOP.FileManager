@@ -12,11 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="View\" />
+    <PackageReference Include="NLog" Version="5.0.0-preview.3" />
+    <PackageReference Include="NLog.Schema" Version="5.0.0-preview.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.12" />
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

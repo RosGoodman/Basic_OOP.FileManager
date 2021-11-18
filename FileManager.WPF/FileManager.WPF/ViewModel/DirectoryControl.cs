@@ -23,6 +23,8 @@ namespace FileManager.WPF.ViewModel
             _logger.Debug("Создание экземпляра класса DirectoryControl.");
         }
 
+        #region methods
+
         public static string[] GetDirectoryes(string dirName)
         {
             _logger.Debug("Получение списка директорий.");
@@ -76,7 +78,8 @@ namespace FileManager.WPF.ViewModel
                 _dirInfo = new DirectoryInfo(directory.FullPath);
                 if (_dirInfo.Exists && !Directory.Exists(newDir + _dirInfo.FullName))
                 {
-                    Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(directory.Parent.FullPath, newDir);
+                    var parent = directory.GetParent(directory);
+                    Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(parent.FullPath, newDir);
                 }
             }
             catch(Exception ex)
@@ -98,5 +101,7 @@ namespace FileManager.WPF.ViewModel
                 _logger.Error($"{ex} - ошибка при попытке создания дочерней директории.");
             }
         }
+
+        #endregion
     }
 }

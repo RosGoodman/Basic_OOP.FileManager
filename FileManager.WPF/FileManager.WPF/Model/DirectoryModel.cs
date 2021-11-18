@@ -7,15 +7,9 @@ using System.Linq;
 
 namespace FileManager.WPF.Model
 {
-    internal class DirectoryModel : BaseFile
+    public class DirectoryModel : BaseFile
     {
         private DirectoryInfo _fileInfo;
-        //заменить на getParent
-        //public DirectoryModel Parent
-        //{
-        //    get => _parent;
-        //    private set => _parent = value;
-        //}
 
         public DirectoryModel(ILogger logger, string filePath)
             : base(logger, filePath)
@@ -26,6 +20,12 @@ namespace FileManager.WPF.Model
             : base (filePath)
         {
 
+        }
+
+        public override BaseFile GetParent(BaseFile file)
+        {
+            var parent = Directory.GetParent(file.FullPath);
+            return base.GetParent(file);
         }
 
         public override long GetSize()
