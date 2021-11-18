@@ -9,7 +9,8 @@ namespace FileManager.WPF.Model
 {
     internal class DirectoryModel : IFile
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static ILogger _logger;
+        private DirectoryInfo _dirInfo;
 
         private string _fullPath;
         private string _name;
@@ -21,8 +22,11 @@ namespace FileManager.WPF.Model
             private set => _fullPath = value;
         }
 
-        public DirectoryModel(string filePath, string name, DirectoryModel parent)
+        public DirectoryModel(ILogger logger, string filePath, string name, DirectoryModel parent)
         {
+            _logger = logger;
+            _logger.Info("Создание экземпляра DirectoryModel.");
+
             _fullPath = filePath;
             _name = name;
             _parent = parent;
@@ -36,12 +40,16 @@ namespace FileManager.WPF.Model
         public string[] GetInfo()
         {
             string[] info = new string[4];
-            DirectoryInfo dirInfo = new DirectoryInfo(_fullPath);
+            _dirInfo = new DirectoryInfo(_fullPath);
 
-            info[0] = dirInfo.Name;
-            info[1] = dirInfo.FullName;
-            info[2] = dirInfo.CreationTime.ToString();
-            info[3] = dirInfo.LastWriteTime.ToString();
+            if (_dirInfo.Exists)
+            {
+                info[0] = _dirInfo.Name;
+                info[1] = _dirInfo.FullName;
+                info[2] = _dirInfo.CreationTime.ToString();
+                info[3] = _dirInfo.LastWriteTime.ToString();
+            }
+            else { _logger.Error($"{_dirInfo.Exists} - файл не найден при попытке получения информации о нем."); }
 
             return info;
         }
@@ -71,12 +79,14 @@ namespace FileManager.WPF.Model
                             dirs.Push(subDirPath);
                         }
                     }
-                    catch (UnauthorizedAccessException)
+                    catch (UnauthorizedAccessException ex)
                     {
+                        _logger.Error($"{ex} - нет доступа к директории.");
                         continue;
                     }
-                    catch (DirectoryNotFoundException)
+                    catch (DirectoryNotFoundException ex)
                     {
+                        _logger.Error($"{ex} - директория не найдена.");
                         continue;
                     }
                 }
@@ -86,12 +96,14 @@ namespace FileManager.WPF.Model
                 {
                     files = Directory.GetFiles(currentDirPath, searchPattern);
                 }
-                catch (UnauthorizedAccessException)
+                catch (UnauthorizedAccessException ex)
                 {
+                    _logger.Error($"{ex} - нет доступа к файлу.");
                     continue;
                 }
-                catch (DirectoryNotFoundException)
+                catch (DirectoryNotFoundException ex)
                 {
+                    _logger.Error($"{ex} - файл не найден.");
                     continue;
                 }
 

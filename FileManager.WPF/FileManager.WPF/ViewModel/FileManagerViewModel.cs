@@ -1,12 +1,14 @@
 ﻿
 using FileManager.WPF.Model;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using NLog;
 
 namespace FileManager.WPF.ViewModel
 {
     internal class FileManagerViewModel : BaseViewModel
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger _logger;
 
         private DirectoryModel _currentDirectory;
         private FileModel _currentFile;
@@ -33,7 +35,7 @@ namespace FileManager.WPF.ViewModel
 
         public FileManagerViewModel()
         {
-
+            
         }
     }
 }

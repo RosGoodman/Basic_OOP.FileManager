@@ -9,14 +9,21 @@ namespace FileManager.WPF.ViewModel
 {
     internal class DirectoryControl : BaseViewModel
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
+        private static ILogger _logger;
+        private DirectoryInfo _dirInfo;
         private ObservableCollection<DirectoryModel> _directories;
 
         public ObservableCollection<DirectoryModel> Directoryes { get => _directories; }
 
+        public DirectoryControl(ILogger logger)
+        {
+            _logger = logger;
+            _logger.Debug("Создание экземпляра класса DirectoryControl.");
+        }
+
         public static string[] GetDirectoryes(string dirName)
         {
+            _logger.Debug("Получение списка директорий.");
             return Directory.GetDirectories(dirName);
         }
 
@@ -24,14 +31,13 @@ namespace FileManager.WPF.ViewModel
         {
             try
             {
-                DirectoryInfo directoryInfo = new DirectoryInfo(path);
-                if (directoryInfo.Exists)
-                    directoryInfo.Create();
+                _dirInfo = new DirectoryInfo(path);
+                if (_dirInfo.Exists)
+                    _dirInfo.Create();
             }
             catch (Exception ex)
             {
-                //заменить на логгер
-                Console.WriteLine(ex);
+                _logger.Error($"{ex} - ошибка при попытке создания директории.");
             }
         }
 
@@ -39,14 +45,13 @@ namespace FileManager.WPF.ViewModel
         {
             try
             {
-                DirectoryInfo directoryInfo = new DirectoryInfo(subPath);
-                if (directoryInfo.Exists)
-                    directoryInfo.CreateSubdirectory(subPath);
+                _dirInfo = new DirectoryInfo(subPath);
+                if (_dirInfo.Exists)
+                    _dirInfo.CreateSubdirectory(subPath);
             }
             catch(Exception ex)
             {
-                //заменить на логгер
-                Console.WriteLine(ex);
+                _logger.Error($"{ex} - ошибка при попытке создания дочерней директории.");
             }
         }
 
@@ -54,16 +59,26 @@ namespace FileManager.WPF.ViewModel
         {
             try
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(dir.FullPath);
-                dirInfo.Delete(true);
-                //Console.WriteLine("Каталог удален");
+                Directory.Delete(dir.FullPath, true);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.Error($"{ex} - ошибка при попытке удаления директории.");
             }
         }
 
-        public void 
+        public void MoveTo(DirectoryModel dir, string newPath)
+        {
+            try
+            {
+                _dirInfo = new DirectoryInfo(dir.FullPath);
+                if (_dirInfo.Exists && !Directory.Exists(newPath))
+                    _dirInfo.MoveTo(newPath);
+            }
+            catch(Exception ex)
+            {
+                _logger.Error($"{ex} - ошибка при попытке перемещения директории.");
+            }
+        }
     }
 }
