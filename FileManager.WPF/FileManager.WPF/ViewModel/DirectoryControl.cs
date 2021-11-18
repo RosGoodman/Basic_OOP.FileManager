@@ -1,5 +1,6 @@
 ﻿
 using FileManager.WPF.Model;
+using NLog;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -8,6 +9,8 @@ namespace FileManager.WPF.ViewModel
 {
     internal class DirectoryControl : BaseViewModel
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private ObservableCollection<DirectoryModel> _directories;
 
         public ObservableCollection<DirectoryModel> Directoryes { get => _directories; }
@@ -51,14 +54,16 @@ namespace FileManager.WPF.ViewModel
         {
             try
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(dir.);
+                DirectoryInfo dirInfo = new DirectoryInfo(dir.FullPath);
                 dirInfo.Delete(true);
-                Console.WriteLine("Каталог удален");
+                //Console.WriteLine("Каталог удален");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
         }
+
+        public void 
     }
 }

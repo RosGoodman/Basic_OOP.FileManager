@@ -1,10 +1,13 @@
 ﻿
 using FileManager.WPF.Model;
+using NLog;
 
 namespace FileManager.WPF.ViewModel
 {
     internal class FileManagerViewModel : BaseViewModel
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private DirectoryModel _currentDirectory;
         private FileModel _currentFile;
 

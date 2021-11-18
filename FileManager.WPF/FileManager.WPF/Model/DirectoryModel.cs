@@ -1,4 +1,5 @@
 ﻿
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,8 @@ namespace FileManager.WPF.Model
 {
     internal class DirectoryModel : IFile
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private string _fullPath;
         private string _name;
         private DirectoryModel _parent;
