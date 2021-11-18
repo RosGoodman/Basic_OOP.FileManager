@@ -7,8 +7,9 @@ using System.Linq;
 
 namespace FileManager.WPF.Model
 {
-    internal class DirectoryModel : BaseFile<DirectoryInfo>
+    internal class DirectoryModel : BaseFile
     {
+        private DirectoryInfo _fileInfo;
         //заменить на getParent
         //public DirectoryModel Parent
         //{
@@ -21,8 +22,8 @@ namespace FileManager.WPF.Model
         {
         }
 
-        public Directory(string FilePath)
-            : base(FilePath)
+        public DirectoryModel(string filePath)
+            : base (filePath)
         {
 
         }

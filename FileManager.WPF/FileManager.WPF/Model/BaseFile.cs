@@ -4,9 +4,8 @@ using System.IO;
 
 namespace FileManager.WPF.Model
 {
-    internal class BaseFile<T> where T : class
+    internal class BaseFile
     {
-        protected internal T _fileInfo;
         protected internal static ILogger _logger;
         protected internal string _fullPath;
 
@@ -41,7 +40,7 @@ namespace FileManager.WPF.Model
             throw new System.NotImplementedException();
         }
 
-        public virtual BaseFile<T> GetParent(BaseFile<T> file)
+        public virtual BaseFile GetParent(BaseFile file)
         {
             throw new System.NotImplementedException();
         }

@@ -12,12 +12,16 @@ namespace FileManager.WPF.ViewModel
         private DirectoryControl _directoryControl;
         private FileControl _fileControl;
 
+        private BaseFile _selectedFile;
+
         private DirectoryModel _currentDirectory;
         private FileModel _currentFile;
 
         #region props
 
-        public ICommand Create { get; set; }
+        public ICommand CreateCommand { get; set; }
+
+        public BaseFile SelectedFile{get;set;}
 
         public DirectoryModel CurrentDirectory
         {
@@ -52,7 +56,10 @@ namespace FileManager.WPF.ViewModel
 
         #region commands
 
-        public void Create() { }
+        public void CreateCommand_Execute(object param)
+        {
+            //if(param.)
+        }
 
         #endregion
     }

@@ -4,8 +4,9 @@ using System.IO;
 
 namespace FileManager.WPF.Model
 {
-    internal class FileModel : BaseFile<FileInfo>
+    internal class FileModel : BaseFile
     {
+        private FileInfo _fileInfo;
         public FileModel(ILogger logger, string filePath)
             : base(logger, filePath)
         {
@@ -39,11 +40,11 @@ namespace FileManager.WPF.Model
             return 0;
         }
 
-        public override BaseFile<FileInfo> GetParent(BaseFile<FileInfo> file)
+        public override BaseFile GetParent(BaseFile file)
         {
             _fileInfo = new FileInfo(file.FullPath);
             var parent = Directory.GetParent(_fileInfo.FullName);
-            return new BaseFile<FileInfo>(parent.FullName);
+            return new BaseFile(parent.FullName);
         }
     }
 }

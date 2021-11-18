@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <Folder Include="View\" />
-    <Folder Include="Command\" />
   </ItemGroup>
 
   <ItemGroup>
