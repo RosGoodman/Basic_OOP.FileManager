@@ -1,7 +1,9 @@
 ﻿
 using FileManager.WPF.Command;
 using FileManager.WPF.Model;
+using FileManager.WPF.Services.WorkWithFiles;
 using NLog;
+using System.Collections.ObjectModel;
 
 namespace FileManager.WPF.ViewModel
 {
@@ -22,6 +24,15 @@ namespace FileManager.WPF.ViewModel
         public RelayCommand CreateCommand { get; private set; }
 
         public BaseFile SelectedFile { get; set; }
+        public ObservableCollection<DirectoryModel> Directoryes
+        {
+            get => _directoryControl.Directoryes;
+            private set
+            {
+                _directoryControl.Directoryes = value;
+                OnPropertyChanged(nameof(Directoryes));
+            }
+        }
 
         public DirectoryModel CurrentDirectory
         {
@@ -29,31 +40,35 @@ namespace FileManager.WPF.ViewModel
             set
             {
                 _currentDirectory = value;
-                OnPropertyChanged("CurrentDirectory");
+
+                Directoryes = new ObservableCollection<DirectoryModel>();
+                foreach (string dir in CurrentDirectory.Directoryes)
+                {
+                    Directoryes.Add(new DirectoryModel(dir));
+                }
+                OnPropertyChanged(nameof(CurrentDirectory));
             }
         }
-
-        //public FileModel CurrentFile
-        //{
-        //    get => _currentFile;
-        //    set
-        //    {
-        //        _currentFile = value;
-        //        OnPropertyChanged("CurrentDirectory");
-        //    }
-        //}
 
         #endregion
 
         public FileManagerViewModel(ILogger logger)
         {
+            //логгер
             _logger = logger;
             _logger.Info("Создание экземпляра класса FileManagerViewModel.");
 
-            this.CreateCommand = new RelayCommand(CreateFileCommand_Execute);
-
+            //создание экземпляров контроллеров
             _directoryControl = new DirectoryControl(_logger);
             _fileControl = new FileControl(_logger);
+
+            //чтение последнего файла
+            JSONFileReader fileReader = new JSONFileReader(_logger);
+            CurrentDirectory = fileReader.GetLastDirectory();
+            SelectedFile = Directoryes[0];
+
+            //подключение команд
+            this.CreateCommand = new RelayCommand(CreateFileCommand_Execute);
         }
 
         #region commands
@@ -67,6 +82,12 @@ namespace FileManager.WPF.ViewModel
         {
             return true;
         }
+
+        #endregion
+
+        #region methods
+
+        
 
         #endregion
     }

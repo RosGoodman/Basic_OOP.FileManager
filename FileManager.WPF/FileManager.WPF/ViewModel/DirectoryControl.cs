@@ -14,13 +14,19 @@ namespace FileManager.WPF.ViewModel
         private ObservableCollection<DirectoryModel> _directories;
         private ObservableCollection<FileModel> _files;
 
-        public ObservableCollection<DirectoryModel> Directoryes { get => _directories; }
+        public ObservableCollection<DirectoryModel> Directoryes
+        {
+            get => _directories;
+            set { _directories = value; } 
+        }
         public ObservableCollection<FileModel> Files { get => _files; }
 
         public DirectoryControl(ILogger logger)
         {
             _logger = logger;
             _logger.Debug("Создание экземпляра класса DirectoryControl.");
+
+            Directoryes = new ObservableCollection<DirectoryModel>();
         }
 
         #region methods

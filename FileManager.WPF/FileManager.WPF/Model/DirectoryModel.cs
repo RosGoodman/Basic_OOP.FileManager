@@ -4,22 +4,40 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 
 namespace FileManager.WPF.Model
 {
     public class DirectoryModel : BaseFile
     {
         private DirectoryInfo _fileInfo;
+        private string[] _directoryes;
+
+        public string[] Directoryes
+        {
+            get => _directoryes;
+            private set => _directoryes = value;
+        }
 
         public DirectoryModel(ILogger logger, string filePath)
             : base(logger, filePath)
         {
+            GetSubDirectoryes();
         }
 
         public DirectoryModel(string filePath)
             : base (filePath)
         {
+            GetSubDirectoryes();
+        }
 
+        private void GetSubDirectoryes()
+        {
+            try
+            {
+                Directoryes = Directory.GetDirectories(FullPath);
+            }
+            catch { }
         }
 
         public override BaseFile GetParent(BaseFile file)
@@ -108,6 +126,11 @@ namespace FileManager.WPF.Model
                     yield return filePath;
                 }
             }
+        }
+        public override string ToString()
+        {
+            _fileInfo = new DirectoryInfo(FullPath);
+            return _fileInfo.Name;
         }
     }
 }
