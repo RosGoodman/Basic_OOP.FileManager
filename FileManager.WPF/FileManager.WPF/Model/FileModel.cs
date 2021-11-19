@@ -10,6 +10,7 @@ namespace FileManager.WPF.Model
         public FileModel(ILogger logger, string filePath)
             : base(logger, filePath)
         {
+            IsDirectory = false;
         }
 
         public override string[] GetInfo()
@@ -44,6 +45,12 @@ namespace FileManager.WPF.Model
         {
             var parent = Directory.GetParent(file.FullPath);
             return new BaseFile(parent.FullName);
+        }
+
+        public override string ToString()
+        {
+            _fileInfo = new FileInfo(FullPath);
+            return _fileInfo.Name;
         }
     }
 }

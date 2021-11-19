@@ -1,5 +1,4 @@
-﻿
-using FileManager.WPF.Command;
+﻿using FileManager.WPF.Command;
 using FileManager.WPF.Model;
 using FileManager.WPF.Services.WorkWithFiles;
 using NLog;
@@ -9,30 +8,51 @@ namespace FileManager.WPF.ViewModel
 {
     public class FileManagerViewModel : BaseViewModel
     {
+        #region feilds
+
         private readonly ILogger _logger;
 
         private DirectoryControl _directoryControl;
         private FileControl _fileControl;
 
+        private DirectoryModel _currentDirectory;
         private BaseFile _selectedFile;
 
-        private DirectoryModel _currentDirectory;
-        //private FileModel _currentFile;
+        #endregion
 
         #region props
 
         public RelayCommand CreateCommand { get; private set; }
+        public RelayCommand ListBoxItemDoubleClick { get; private set; }
 
-        public BaseFile SelectedFile { get; set; }
-        public ObservableCollection<DirectoryModel> Directoryes
+        public BaseFile SelectedFile
         {
-            get => _directoryControl.Directoryes;
-            private set
+            get => _selectedFile;
+            set
             {
-                _directoryControl.Directoryes = value;
-                OnPropertyChanged(nameof(Directoryes));
+                _selectedFile = value;
+                OnPropertyChanged("SelectedFile");
             }
         }
+        public ObservableCollection<BaseFile> Directoryes
+        {
+            get => _directoryControl.Directoryes;
+            set
+            {
+                _directoryControl.Directoryes = value;
+                OnPropertyChanged("Directoryes");
+            }
+        }
+
+        //public string CurrentPath
+        //{
+        //    get => _currentPath;
+        //    private set
+        //    {
+        //        _currentPath = value;
+        //        OnPropertyChanged(nameof(CurrentPath));
+        //    }
+        //}
 
         public DirectoryModel CurrentDirectory
         {
@@ -41,17 +61,32 @@ namespace FileManager.WPF.ViewModel
             {
                 _currentDirectory = value;
 
-                Directoryes = new ObservableCollection<DirectoryModel>();
-                foreach (string dir in CurrentDirectory.Directoryes)
+                Directoryes = new ObservableCollection<BaseFile>();
+                //добавление директорий в список
+                if(CurrentDirectory.Directoryes != null)
                 {
-                    Directoryes.Add(new DirectoryModel(dir));
+                    foreach (string dir in CurrentDirectory.Directoryes)
+                    {
+                        Directoryes.Add(new DirectoryModel(dir));
+                    }
                 }
-                OnPropertyChanged(nameof(CurrentDirectory));
+                
+                //добавление файлов в список
+                if(CurrentDirectory.Files != null)
+                {
+                    foreach (string file in CurrentDirectory.Files)
+                    {
+                        Directoryes.Add(new FileModel(_logger, file));
+                    }
+                    OnPropertyChanged(nameof(CurrentDirectory));
+                }
             }
         }
 
         #endregion
 
+        /// <summary> CTOR </summary>
+        /// <param name="logger"></param>
         public FileManagerViewModel(ILogger logger)
         {
             //логгер
@@ -69,6 +104,7 @@ namespace FileManager.WPF.ViewModel
 
             //подключение команд
             this.CreateCommand = new RelayCommand(CreateFileCommand_Execute);
+            this.ListBoxItemDoubleClick = new RelayCommand(OpenDir_Execute);
         }
 
         #region commands
@@ -78,16 +114,18 @@ namespace FileManager.WPF.ViewModel
             _fileControl.Create("C:\\temp\\tt.txt");
         }
 
-        public bool CreateFileCommand_CanExecute()
+        public void OpenDir_Execute()
         {
-            return true;
+            if (SelectedFile.IsDirectory)
+            {
+                CurrentDirectory = (DirectoryModel)SelectedFile;
+                if(Directoryes.Count>0)
+                    SelectedFile = Directoryes[0];
+            }
+                
+            //else
+                // try open
         }
-
-        #endregion
-
-        #region methods
-
-        
 
         #endregion
     }

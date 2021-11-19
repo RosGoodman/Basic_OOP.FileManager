@@ -3,6 +3,7 @@ using FileManager.WPF.Model;
 using NLog;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 
 namespace FileManager.WPF.ViewModel
@@ -11,13 +12,16 @@ namespace FileManager.WPF.ViewModel
     {
         private static ILogger _logger;
         private DirectoryInfo _dirInfo;
-        private ObservableCollection<DirectoryModel> _directories;
+        private ObservableCollection<BaseFile> _directories;
         private ObservableCollection<FileModel> _files;
 
-        public ObservableCollection<DirectoryModel> Directoryes
+        public ObservableCollection<BaseFile> Directoryes
         {
             get => _directories;
-            set { _directories = value; } 
+            set
+            {
+                _directories = value;
+            }
         }
         public ObservableCollection<FileModel> Files { get => _files; }
 
@@ -26,7 +30,7 @@ namespace FileManager.WPF.ViewModel
             _logger = logger;
             _logger.Debug("Создание экземпляра класса DirectoryControl.");
 
-            Directoryes = new ObservableCollection<DirectoryModel>();
+            Directoryes = new ObservableCollection<BaseFile>();
         }
 
         #region methods

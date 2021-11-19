@@ -8,14 +8,19 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid Background="#FFC8C8C8">
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <DockPanel LastChildFill="True">
-            <Button Margin="1" Height="16" FontSize="10" HorizontalAlignment="Left" Click="Button_Click">Back</Button>
-            <TextBox Grid.Column="0"  Margin="5,2,5,2" Background="#FFEFEAEA"/>
+            <Button Margin="5,2,2,2" Height="26" FontSize="15" HorizontalAlignment="Left">Back</Button>
+            <TextBox Name="PathString" Text="{Binding Path=FullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Margin="5,2,5,2" Background="#FFEFEAEA"/>
         </DockPanel>
-        <ListBox Name="dirList" Margin="5" Grid.Row="1" />
+        <ListBox Name="dirList" Margin="5" Grid.Row="1" ItemsSource="{Binding Directoryes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedFile, Mode=TwoWay, UpdateSourceTrigger=Explicit}">
+            <ListBox.InputBindings>
+                <!--<MouseBinding Gesture="LeftDoubleClick"/>-->
+                <KeyBinding Gesture="Enter" Command="{Binding ListBoxItemDoubleClick}"/>
+            </ListBox.InputBindings>
+        </ListBox>
 
     </Grid>
 </Window>

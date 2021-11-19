@@ -9,10 +9,13 @@ namespace FileManager.WPF.Model
         protected internal static ILogger _logger;
         protected internal string _fullPath;
 
+        public bool IsDirectory { get; set; }
+
         public string FullPath
         {
             get => _fullPath;
-            private set => _fullPath = value;
+            //propertyChanged!.
+            set => _fullPath = value;
         }
 
         public BaseFile(ILogger logger, string filePath)

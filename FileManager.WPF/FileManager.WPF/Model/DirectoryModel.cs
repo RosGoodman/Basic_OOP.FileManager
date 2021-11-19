@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 
 namespace FileManager.WPF.Model
 {
@@ -12,6 +11,7 @@ namespace FileManager.WPF.Model
     {
         private DirectoryInfo _fileInfo;
         private string[] _directoryes;
+        private string[] _files;
 
         public string[] Directoryes
         {
@@ -19,15 +19,23 @@ namespace FileManager.WPF.Model
             private set => _directoryes = value;
         }
 
+        public string[] Files
+        {
+            get => _files;
+            private set => _files = value;
+        }
+
         public DirectoryModel(ILogger logger, string filePath)
             : base(logger, filePath)
         {
+            IsDirectory = true;
             GetSubDirectoryes();
         }
 
         public DirectoryModel(string filePath)
             : base (filePath)
         {
+            IsDirectory = true;
             GetSubDirectoryes();
         }
 
@@ -36,6 +44,7 @@ namespace FileManager.WPF.Model
             try
             {
                 Directoryes = Directory.GetDirectories(FullPath);
+                Files = Directory.GetFiles(FullPath);
             }
             catch { }
         }
@@ -127,6 +136,7 @@ namespace FileManager.WPF.Model
                 }
             }
         }
+
         public override string ToString()
         {
             _fileInfo = new DirectoryInfo(FullPath);
