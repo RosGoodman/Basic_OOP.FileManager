@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileManager.WPF"
+        xmlns:viewmodel="clr-namespace:FileManager.WPF.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:FileManagerViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid Background="#FFC8C8C8">
@@ -12,13 +14,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <DockPanel LastChildFill="True">
-            <Button Margin="5,2,2,2" Height="26" FontSize="15" HorizontalAlignment="Left">Back</Button>
-            <TextBox Name="PathString" Text="{Binding Path=FullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Margin="5,2,5,2" Background="#FFEFEAEA"/>
+            <Button Name="BackButton" Margin="5,2,2,2" Height="26" FontSize="15" HorizontalAlignment="Left"
+                    Command="{Binding GoToPreviousDirCommand}">Back</Button>
+            <TextBox Name="PathString" Grid.Column="0" Margin="5,2,5,2" Background="#FFEFEAEA"
+                     Text="{Binding Path=CurrentPath}"/>
         </DockPanel>
-        <ListBox Name="dirList" Margin="5" Grid.Row="1" ItemsSource="{Binding Directoryes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedFile, Mode=TwoWay, UpdateSourceTrigger=Explicit}">
+        <ListBox Name="dirList" Margin="5" Grid.Row="1"
+                 ItemsSource="{Binding Directoryes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 SelectedItem="{Binding SelectedFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <ListBox.InputBindings>
-                <!--<MouseBinding Gesture="LeftDoubleClick"/>-->
-                <KeyBinding Gesture="Enter" Command="{Binding ListBoxItemDoubleClick}"/>
+                <KeyBinding Gesture="Enter" Command="{Binding ListBoxItemEnterCommand}"/>
+                <!--<KeyBinding Gesture="Backspace" Command="{Binding ListBoxItemDoubleClick}"/>-->
             </ListBox.InputBindings>
         </ListBox>
 

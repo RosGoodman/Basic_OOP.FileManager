@@ -41,9 +41,10 @@ namespace FileManager.WPF.Model
             return 0;
         }
 
-        public override BaseFile GetParent(BaseFile file)
+        public override BaseFile GetParent()
         {
-            var parent = Directory.GetParent(file.FullPath);
+            _fileInfo = new FileInfo(FullPath);
+            var parent = _fileInfo.Directory;
             return new BaseFile(parent.FullName);
         }
 

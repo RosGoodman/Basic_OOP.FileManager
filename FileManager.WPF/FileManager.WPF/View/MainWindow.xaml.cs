@@ -12,15 +12,13 @@ namespace FileManager.WPF
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         FileManagerViewModel _viewModel;
+
         public MainWindow()
         {
             InitializeComponent();
 
             _viewModel = new FileManagerViewModel(_logger);
             DataContext = _viewModel;
-            dirList.ItemsSource = _viewModel.Directoryes;
-
-            PathString.DataContext = _viewModel.CurrentDirectory;
         }
     }
 }

@@ -17,13 +17,15 @@ namespace FileManager.WPF.ViewModel
 
         private DirectoryModel _currentDirectory;
         private BaseFile _selectedFile;
+        private string _currentPath;
 
         #endregion
 
         #region props
 
         public RelayCommand CreateCommand { get; private set; }
-        public RelayCommand ListBoxItemDoubleClick { get; private set; }
+        public RelayCommand ListBoxItemEnterCommand { get; private set; }
+        public RelayCommand GoToPreviousDirCommand { get; private set; }
 
         public BaseFile SelectedFile
         {
@@ -32,6 +34,7 @@ namespace FileManager.WPF.ViewModel
             {
                 _selectedFile = value;
                 OnPropertyChanged("SelectedFile");
+                CurrentPath = _currentDirectory.FullPath;
             }
         }
         public ObservableCollection<BaseFile> Directoryes
@@ -44,15 +47,15 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        //public string CurrentPath
-        //{
-        //    get => _currentPath;
-        //    private set
-        //    {
-        //        _currentPath = value;
-        //        OnPropertyChanged(nameof(CurrentPath));
-        //    }
-        //}
+        public string CurrentPath
+        {
+            get => _currentPath;
+            set
+            {
+                _currentPath = value;
+                OnPropertyChanged(nameof(CurrentPath));
+            }
+        }
 
         public DirectoryModel CurrentDirectory
         {
@@ -78,12 +81,17 @@ namespace FileManager.WPF.ViewModel
                     {
                         Directoryes.Add(new FileModel(_logger, file));
                     }
-                    OnPropertyChanged(nameof(CurrentDirectory));
                 }
+                OnPropertyChanged(nameof(CurrentDirectory));
             }
         }
 
         #endregion
+
+        //public FileManagerViewModel()
+        //{
+
+        //}
 
         /// <summary> CTOR </summary>
         /// <param name="logger"></param>
@@ -103,8 +111,9 @@ namespace FileManager.WPF.ViewModel
             SelectedFile = Directoryes[0];
 
             //подключение команд
-            this.CreateCommand = new RelayCommand(CreateFileCommand_Execute);
-            this.ListBoxItemDoubleClick = new RelayCommand(OpenDir_Execute);
+            CreateCommand = new RelayCommand(CreateFileCommand_Execute);
+            ListBoxItemEnterCommand = new RelayCommand(OpenDir_Execute);
+            GoToPreviousDirCommand = new RelayCommand(GoToPreviousDirectory_Command);
         }
 
         #region commands
@@ -125,6 +134,15 @@ namespace FileManager.WPF.ViewModel
                 
             //else
                 // try open
+        }
+
+        public void GoToPreviousDirectory_Command()
+        {
+            BaseFile parent = CurrentDirectory.GetParent();
+
+            CurrentDirectory = (DirectoryModel)CurrentDirectory.GetParent();
+            if (Directoryes.Count > 0)
+                SelectedFile = Directoryes[0];
         }
 
         #endregion

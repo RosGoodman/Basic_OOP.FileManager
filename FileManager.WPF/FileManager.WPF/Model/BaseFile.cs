@@ -1,10 +1,12 @@
 ﻿
 using NLog;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace FileManager.WPF.Model
 {
-    public class BaseFile
+    public class BaseFile : INotifyPropertyChanged
     {
         protected internal static ILogger _logger;
         protected internal string _fullPath;
@@ -43,9 +45,16 @@ namespace FileManager.WPF.Model
             throw new System.NotImplementedException();
         }
 
-        public virtual BaseFile GetParent(BaseFile file)
+        public virtual BaseFile GetParent()
         {
             throw new System.NotImplementedException();
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public virtual void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

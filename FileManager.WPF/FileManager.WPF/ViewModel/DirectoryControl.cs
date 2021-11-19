@@ -88,7 +88,7 @@ namespace FileManager.WPF.ViewModel
                 _dirInfo = new DirectoryInfo(directory.FullPath);
                 if (_dirInfo.Exists && !Directory.Exists(newDir + _dirInfo.FullName))
                 {
-                    var parent = directory.GetParent(directory);
+                    var parent = directory.GetParent();
                     Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(parent.FullPath, newDir);
                 }
             }

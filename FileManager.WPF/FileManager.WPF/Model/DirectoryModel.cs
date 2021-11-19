@@ -9,7 +9,7 @@ namespace FileManager.WPF.Model
 {
     public class DirectoryModel : BaseFile
     {
-        private DirectoryInfo _fileInfo;
+        private DirectoryInfo _directoryFileInfo;
         private string[] _directoryes;
         private string[] _files;
 
@@ -49,10 +49,14 @@ namespace FileManager.WPF.Model
             catch { }
         }
 
-        public override BaseFile GetParent(BaseFile file)
+        public override BaseFile GetParent()
         {
-            var parent = Directory.GetParent(file.FullPath);
-            return base.GetParent(file);
+            _directoryFileInfo = new DirectoryInfo(FullPath);
+            var parent = _directoryFileInfo.Parent;
+
+            if (parent == null) return (BaseFile)this;
+
+            return (BaseFile)new DirectoryModel(parent.FullName);
         }
 
         public override long GetSize()
@@ -63,16 +67,16 @@ namespace FileManager.WPF.Model
         public override string[] GetInfo()
         {
             string[] info = new string[4];
-            _fileInfo = new DirectoryInfo(_fullPath);
+            _directoryFileInfo = new DirectoryInfo(_fullPath);
 
-            if (_fileInfo.Exists)
+            if (_directoryFileInfo.Exists)
             {
-                info[0] = _fileInfo.Name;
-                info[1] = _fileInfo.FullName;
-                info[2] = _fileInfo.CreationTime.ToString();
-                info[3] = _fileInfo.LastWriteTime.ToString();
+                info[0] = _directoryFileInfo.Name;
+                info[1] = _directoryFileInfo.FullName;
+                info[2] = _directoryFileInfo.CreationTime.ToString();
+                info[3] = _directoryFileInfo.LastWriteTime.ToString();
             }
-            else { _logger.Error($"{_fileInfo.Exists} - файл не найден при попытке получения информации о нем."); }
+            else { _logger.Error($"{_directoryFileInfo.Exists} - файл не найден при попытке получения информации о нем."); }
 
             return info;
         }
@@ -139,8 +143,8 @@ namespace FileManager.WPF.Model
 
         public override string ToString()
         {
-            _fileInfo = new DirectoryInfo(FullPath);
-            return _fileInfo.Name;
+            _directoryFileInfo = new DirectoryInfo(FullPath);
+            return _directoryFileInfo.Name;
         }
     }
 }
