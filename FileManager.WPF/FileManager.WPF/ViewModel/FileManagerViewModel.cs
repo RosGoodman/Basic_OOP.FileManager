@@ -23,6 +23,8 @@ namespace FileManager.WPF.ViewModel
         private string _currentPath;
         private string _fileInfo;
 
+        private BaseFile _movableFile;
+
         #endregion
 
         #region props
@@ -31,6 +33,7 @@ namespace FileManager.WPF.ViewModel
         public RelayCommand ListBoxItemEnterCommand { get; private set; }
         public RelayCommand GoToPreviousDirCommand { get; private set; }
         public RelayCommand ListBoxItemBackspaceCommand { get; private set; }
+        public RelayCommand ListBoxItem_Ctrl_X_Command { get; private set; }
 
         public string FileInfo
         {
@@ -128,18 +131,22 @@ namespace FileManager.WPF.ViewModel
             ListBoxItemEnterCommand = new RelayCommand(OpenDir_Execute);
             GoToPreviousDirCommand = new RelayCommand(GoToPreviousDirectory_Command);
             ListBoxItemBackspaceCommand = new RelayCommand(GoToPreviousDirectory_Command);
+            ListBoxItem_Ctrl_X_Command = new RelayCommand(CutFile_Command);
         }
 
         #region commands
 
-        public void CreateFileCommand_Execute()
+        private void CreateFileCommand_Execute()
         {
+            _logger.Info($"Зпауск команды {nameof(CreateFileCommand_Execute)}");
             _fileControl.Create("C:\\temp\\tt.txt");
         }
 
-        public void OpenDir_Execute()
+        private void OpenDir_Execute()
         {
-            if (SelectedFile.IsDirectory)
+            _logger.Info($"Зпауск команды {nameof(OpenDir_Execute)}");
+
+            if (SelectedFile.IsDirectory && SelectedFile != null)
             {
                 CurrentDirectory = (DirectoryModel)SelectedFile;
                 if(Directoryes.Count>0)
@@ -150,8 +157,10 @@ namespace FileManager.WPF.ViewModel
                 // try open
         }
 
-        public void GoToPreviousDirectory_Command()
+        private void GoToPreviousDirectory_Command()
         {
+            _logger.Info($"Зпауск команды {nameof(GoToPreviousDirectory_Command)}");
+
             BaseFile parent = CurrentDirectory.GetParent();
 
             var prevDir = CurrentDirectory.FullPath;
@@ -159,7 +168,6 @@ namespace FileManager.WPF.ViewModel
             if (Directoryes.Count > 0)
             {
                 CurrentDirectory = (DirectoryModel)CurrentDirectory.GetParent();
-                SelectedFile = Directoryes[0];
             }
             
             if(CurrentDirectory.FullPath == prevDir)
@@ -167,6 +175,16 @@ namespace FileManager.WPF.ViewModel
                 DirectoryModel curDir = new DirectoryModel(_logger, "");
                 curDir.SetDirectoryes(_driveControl.Drives);
                 CurrentDirectory = curDir;
+            }
+            SelectedFile = Directoryes[0];
+        }
+
+        private void CutFile_Command()
+        {
+            if (SelectedFile == null) return;
+            if (SelectedFile.IsDirectory)
+            {
+                _movableFile = SelectedFile;
             }
         }
 

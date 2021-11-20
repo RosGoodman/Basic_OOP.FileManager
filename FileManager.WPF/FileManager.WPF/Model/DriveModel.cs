@@ -34,6 +34,7 @@ namespace FileManager.WPF.Model
             _driveInfo = new DriveInfo(FullPath);
             return _driveInfo.Name;
         }
+
         private void GetSubDirectoryes()
         {
             try

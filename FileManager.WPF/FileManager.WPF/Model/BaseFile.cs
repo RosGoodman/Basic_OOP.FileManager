@@ -22,14 +22,14 @@ namespace FileManager.WPF.Model
         public BaseFile(ILogger logger, string filePath)
         {
             _logger = logger;
-            _logger.Info("Создание экземпляра объекта AbstractModel.");
+            //_logger.Info("Создание экземпляра объекта AbstractModel.");
 
             _fullPath = filePath;
         }
 
         public BaseFile(string filePath)
         {
-            if(_logger != null) _logger.Info("Создание экземпляра объекта AbstractModel.");
+            //if(_logger != null) _logger.Info("Создание экземпляра объекта AbstractModel.");
 
             _fullPath = filePath;
         }
