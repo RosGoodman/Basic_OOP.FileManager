@@ -7,11 +7,12 @@
         xmlns:viewmodel="clr-namespace:FileManager.WPF.ViewModel" 
         d:DataContext="{d:DesignInstance Type=viewmodel:FileManagerViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="700" Width="1024">
     <Grid Background="#FFC8C8C8">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
         <DockPanel LastChildFill="True">
             <Button Name="BackButton" Margin="5,2,2,2" Height="26" FontSize="15" HorizontalAlignment="Left"
@@ -19,14 +20,17 @@
             <TextBox Name="PathString" Grid.Column="0" Margin="5,2,5,2" Background="#FFEFEAEA"
                      Text="{Binding Path=CurrentPath}"/>
         </DockPanel>
-        <ListBox Name="dirList" Margin="5" Grid.Row="1"
+        <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1"
                  ItemsSource="{Binding Directoryes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                  SelectedItem="{Binding SelectedFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <ListBox.InputBindings>
                 <KeyBinding Gesture="Enter" Command="{Binding ListBoxItemEnterCommand}"/>
-                <!--<KeyBinding Gesture="Backspace" Command="{Binding ListBoxItemDoubleClick}"/>-->
+                <KeyBinding Gesture="Backspace" Command="{Binding ListBoxItemBackspaceCommand}"/>
             </ListBox.InputBindings>
         </ListBox>
-
+            <TextBlock FontSize="11" Grid.Row="2" Margin="5,-1,5,2" VerticalAlignment="Top"
+                   Text="{Binding FileInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">sdfsdf
+            
+            </TextBlock>
     </Grid>
 </Window>

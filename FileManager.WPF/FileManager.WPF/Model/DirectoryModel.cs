@@ -2,6 +2,7 @@
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
@@ -51,6 +52,8 @@ namespace FileManager.WPF.Model
 
         public override BaseFile GetParent()
         {
+            if (FullPath == "") return this;
+
             _directoryFileInfo = new DirectoryInfo(FullPath);
             var parent = _directoryFileInfo.Parent;
 
@@ -59,9 +62,11 @@ namespace FileManager.WPF.Model
             return (BaseFile)new DirectoryModel(parent.FullName);
         }
 
-        public override long GetSize()
+        public override decimal GetSize()
         {
-            return SafeEnumerateFiles(_fullPath, "*.*", SearchOption.AllDirectories).Sum(n => new FileInfo(n).Length);
+            decimal byteSize = SafeEnumerateFiles(_fullPath, "*.*", SearchOption.AllDirectories).Sum(n => new FileInfo(n).Length);
+            decimal kByteSize = Math.Round(byteSize / 1024);
+            return kByteSize;
         }
 
         public override string[] GetInfo()
@@ -145,6 +150,19 @@ namespace FileManager.WPF.Model
         {
             _directoryFileInfo = new DirectoryInfo(FullPath);
             return _directoryFileInfo.Name;
+        }
+
+        public void SetDirectoryes(ObservableCollection<BaseFile> dirs)
+        {
+            if (_directoryes != null)
+                return;   //на всякий случай (метод нужен только для drives)
+            else
+                _directoryes = new string[dirs.Count];
+
+            for (int i = 0; i < dirs.Count; i++)
+            {
+                _directoryes[i] = dirs[i].FullPath.ToString();
+            }
         }
     }
 }

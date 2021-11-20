@@ -1,7 +1,9 @@
 ﻿using FileManager.WPF.Command;
 using FileManager.WPF.Model;
 using FileManager.WPF.Services.WorkWithFiles;
+using FileManager.WPF.ViewModel.Controls;
 using NLog;
+using System;
 using System.Collections.ObjectModel;
 
 namespace FileManager.WPF.ViewModel
@@ -14,10 +16,12 @@ namespace FileManager.WPF.ViewModel
 
         private DirectoryControl _directoryControl;
         private FileControl _fileControl;
+        private DriveControl _driveControl;
 
         private DirectoryModel _currentDirectory;
         private BaseFile _selectedFile;
         private string _currentPath;
+        private string _fileInfo;
 
         #endregion
 
@@ -26,6 +30,17 @@ namespace FileManager.WPF.ViewModel
         public RelayCommand CreateCommand { get; private set; }
         public RelayCommand ListBoxItemEnterCommand { get; private set; }
         public RelayCommand GoToPreviousDirCommand { get; private set; }
+        public RelayCommand ListBoxItemBackspaceCommand { get; private set; }
+
+        public string FileInfo
+        {
+            get => _fileInfo;
+            set
+            {
+                _fileInfo = value;
+                OnPropertyChanged("FileInfo");
+            }
+        }
 
         public BaseFile SelectedFile
         {
@@ -35,8 +50,10 @@ namespace FileManager.WPF.ViewModel
                 _selectedFile = value;
                 OnPropertyChanged("SelectedFile");
                 CurrentPath = _currentDirectory.FullPath;
+                if (SelectedFile != null) FileInfo = GetFileInfo();
             }
         }
+
         public ObservableCollection<BaseFile> Directoryes
         {
             get => _directoryControl.Directoryes;
@@ -88,11 +105,6 @@ namespace FileManager.WPF.ViewModel
 
         #endregion
 
-        //public FileManagerViewModel()
-        //{
-
-        //}
-
         /// <summary> CTOR </summary>
         /// <param name="logger"></param>
         public FileManagerViewModel(ILogger logger)
@@ -104,6 +116,7 @@ namespace FileManager.WPF.ViewModel
             //создание экземпляров контроллеров
             _directoryControl = new DirectoryControl(_logger);
             _fileControl = new FileControl(_logger);
+            _driveControl = new DriveControl(_logger);
 
             //чтение последнего файла
             JSONFileReader fileReader = new JSONFileReader(_logger);
@@ -114,6 +127,7 @@ namespace FileManager.WPF.ViewModel
             CreateCommand = new RelayCommand(CreateFileCommand_Execute);
             ListBoxItemEnterCommand = new RelayCommand(OpenDir_Execute);
             GoToPreviousDirCommand = new RelayCommand(GoToPreviousDirectory_Command);
+            ListBoxItemBackspaceCommand = new RelayCommand(GoToPreviousDirectory_Command);
         }
 
         #region commands
@@ -140,9 +154,54 @@ namespace FileManager.WPF.ViewModel
         {
             BaseFile parent = CurrentDirectory.GetParent();
 
-            CurrentDirectory = (DirectoryModel)CurrentDirectory.GetParent();
+            var prevDir = CurrentDirectory.FullPath;
+            
             if (Directoryes.Count > 0)
+            {
+                CurrentDirectory = (DirectoryModel)CurrentDirectory.GetParent();
                 SelectedFile = Directoryes[0];
+            }
+            
+            if(CurrentDirectory.FullPath == prevDir)
+            {
+                DirectoryModel curDir = new DirectoryModel(_logger, "");
+                curDir.SetDirectoryes(_driveControl.Drives);
+                CurrentDirectory = curDir;
+            }
+        }
+
+        #endregion
+
+        #region methods
+
+        private string GetFileInfo()
+        {
+            string[] infoArr = SelectedFile.GetInfo();
+
+            string sizeString = string.Empty;
+            decimal size = 0;
+            if (!SelectedFile.IsDirectory) size = SelectedFile.GetSize();
+            string postfix = "Byte";
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (size > 1024)
+                {
+                    size /= 1024;
+                    if (Enum.IsDefined(typeof(SystemOfUnits), i+1))
+                        postfix = ((SystemOfUnits)i+1).ToString();
+                }
+                else break;
+            }
+
+            if (size > 0)
+            {
+                size = Math.Round(size, 2);
+                sizeString = $", Размер: {size} {postfix}";
+            }
+
+            string info = $" Создан: {infoArr[2]}, Изменен: {infoArr[3]}{sizeString}";
+            return info;
         }
 
         #endregion

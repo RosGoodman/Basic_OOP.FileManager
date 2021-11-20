@@ -1,7 +1,6 @@
 ﻿
 using NLog;
 using System.ComponentModel;
-using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace FileManager.WPF.Model
@@ -35,7 +34,7 @@ namespace FileManager.WPF.Model
             _fullPath = filePath;
         }
 
-        public virtual long GetSize()
+        public virtual decimal GetSize()
         {
             throw new System.NotImplementedException();
         }

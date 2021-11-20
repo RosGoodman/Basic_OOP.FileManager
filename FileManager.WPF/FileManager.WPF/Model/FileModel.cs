@@ -29,12 +29,12 @@ namespace FileManager.WPF.Model
             return info;
         }
 
-        public override long GetSize()
+        public override decimal GetSize()
         {
             _fileInfo = new FileInfo(_fullPath);
             if (_fileInfo.Exists)
             {
-                return _fileInfo.Length;
+                return _fileInfo.Length / 1024;
             }
             else { _logger.Error($"{_fileInfo.Exists} - файл не найден при попытке получения рего размера."); }
 

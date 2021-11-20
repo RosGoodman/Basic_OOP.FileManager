@@ -3,7 +3,6 @@ using FileManager.WPF.Model;
 using NLog;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 
 namespace FileManager.WPF.ViewModel
