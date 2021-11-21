@@ -9,8 +9,21 @@ namespace FileManager.WPF.Model
     {
         protected internal static ILogger _logger;
         protected internal string _fullPath;
+        protected internal string _name;
+        private string[] _fileInfo;
+        private string _imagePath;
 
-        public bool IsDirectory { get; set; }
+        public string ImagePath { get => _imagePath; set => _imagePath = value; }
+
+        public string[] FileInfo
+        {
+            get => _fileInfo;
+            set => _fileInfo = value;
+        }
+
+        public string Name { get => _name; set => _name = value; }
+        
+        internal bool IsDirectory { get; set; }
 
         public string FullPath
         {
@@ -34,14 +47,19 @@ namespace FileManager.WPF.Model
             _fullPath = filePath;
         }
 
+        public void ChangeName(string newName)
+        {
+            _name = newName;
+        }
+
         public virtual decimal GetSize()
         {
-            throw new System.NotImplementedException();
+            return 0;
         }
 
         public virtual string[] GetInfo()
         {
-            throw new System.NotImplementedException();
+            return _fileInfo;
         }
 
         public virtual BaseFile GetParent()

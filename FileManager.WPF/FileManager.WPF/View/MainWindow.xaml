@@ -20,17 +20,26 @@
             <TextBox Name="PathString" Grid.Column="0" Margin="5,2,5,2" Background="#FFEFEAEA"
                      Text="{Binding Path=CurrentPath}"/>
         </DockPanel>
-        <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1"
-                 ItemsSource="{Binding Directoryes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+        <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1" 
+                 ItemsSource="{Binding AllFilesInCurrentDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  SelectedItem="{Binding SelectedFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="20" Height="20" Source="{Binding Path=ImagePath}"/>
+                        <TextBlock Text="{Binding Path=Name}" FontSize="15"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
             <ListBox.InputBindings>
                 <KeyBinding Gesture="Enter" Command="{Binding ListBoxItemEnterCommand}"/>
                 <KeyBinding Gesture="Backspace" Command="{Binding ListBoxItemBackspaceCommand}"/>
-                <!--<KeyBinding Gesture="Backspace" Command="{Binding ListBoxItem_Ctrl_X_Command}"/>
-                <KeyBinding Gesture="Backspace" Command="{Binding ListBoxItem_Ctrl_C_Command}"/>
-                <KeyBinding Gesture="Backspace" Command="{Binding ListBoxItem_Ctrl_V_Command}"/>-->
+                <KeyBinding Gesture="Ctrl+X" Command="{Binding ListBoxItem_Ctrl_X_Command}"/>
+                <KeyBinding Gesture="Ctrl+C" Command="{Binding ListBoxItem_Ctrl_C_Command}"/>
+                <KeyBinding Gesture="Ctrl+V" Command="{Binding ListBoxItem_Ctrl_V_Command}"/>
             </ListBox.InputBindings>
         </ListBox>
+        
             <TextBlock FontSize="11" Grid.Row="2" Margin="5,-1,5,2" VerticalAlignment="Top"
                    Text="{Binding FileInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">sdfsdf
             

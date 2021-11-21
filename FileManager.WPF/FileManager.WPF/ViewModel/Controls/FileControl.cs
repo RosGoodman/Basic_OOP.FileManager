@@ -6,7 +6,7 @@ using System.IO;
 
 namespace FileManager.WPF.ViewModel
 {
-    internal class FileControl : AbstrctBaseViewModel<FileModel>
+    internal class FileControl : AbstrctFileControl<FileModel>
     {
         private static ILogger _logger;
         private FileInfo _fileInfo;
@@ -37,7 +37,7 @@ namespace FileManager.WPF.ViewModel
             {
                 _fileInfo = new FileInfo(file.FullPath);
                 if (_fileInfo.Exists)
-                    _fileInfo.CopyTo(newPath, true);
+                    File.Copy(file.FullPath, newPath + file.Name, true);
             }
             catch(Exception ex)
             {

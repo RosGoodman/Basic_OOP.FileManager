@@ -11,53 +11,77 @@ namespace FileManager.WPF.Model
     public class DirectoryModel : BaseFile
     {
         private DirectoryInfo _directoryFileInfo;
-        private string[] _directoryes;
-        private string[] _files;
+        private ObservableCollection<BaseFile> _subFiles;
 
-        public string[] Directoryes
+        public ObservableCollection<BaseFile> SubFiles
         {
-            get => _directoryes;
-            private set => _directoryes = value;
-        }
-
-        public string[] Files
-        {
-            get => _files;
-            private set => _files = value;
+            get => _subFiles;
+            set => _subFiles = value;
         }
 
         public DirectoryModel(ILogger logger, string filePath)
             : base(logger, filePath)
         {
-            IsDirectory = true;
-            GetSubDirectoryes();
+            LoadMainData(filePath);
         }
 
         public DirectoryModel(string filePath)
-            : base (filePath)
+            : base(filePath)
         {
-            IsDirectory = true;
-            GetSubDirectoryes();
+            LoadMainData(filePath);
         }
 
-        private void GetSubDirectoryes()
+        private void LoadMainData(string filePath)
         {
+            IsDirectory = true;
+            if (filePath != "MyComputer")
+            {
+                ChangeName(new DirectoryInfo(filePath).Name);
+                SetFileInfo();
+            }
+
+            ImagePath = Path.GetFullPath("Images/folder.png");
+        }
+
+        public void LoadSubDirectoryes()
+        {
+            string[] directoryes;
+            string[] files;
+            _subFiles = new ObservableCollection<BaseFile>();
+
+            if (FullPath == "MyComputer")
+            {
+                DriveInfo[] drives = DriveInfo.GetDrives();
+                directoryes = new string[drives.Length];
+
+                for(int i = 0; i < drives.Length; i++)
+                {
+                    directoryes[i] = drives[i].Name;
+                }
+                LoadDirectoryesToSubFiles(directoryes);
+            }
+
             try
             {
-                Directoryes = Directory.GetDirectories(FullPath);
-                Files = Directory.GetFiles(FullPath);
+                directoryes = Directory.GetDirectories(FullPath);
+                LoadDirectoryesToSubFiles(directoryes);
+            }
+            catch { }
+            try
+            {
+                files = Directory.GetFiles(FullPath);
+                LoadFilesToSubFiles(files);
             }
             catch { }
         }
 
         public override BaseFile GetParent()
         {
-            if (FullPath == "") return this;
-
+            if (FullPath == "MyComputer") return this;
             _directoryFileInfo = new DirectoryInfo(FullPath);
             var parent = _directoryFileInfo.Parent;
 
-            if (parent == null) return (BaseFile)this;
+            if (parent == null) return GetDriverParent();
 
             return (BaseFile)new DirectoryModel(parent.FullName);
         }
@@ -69,7 +93,7 @@ namespace FileManager.WPF.Model
             return kByteSize;
         }
 
-        public override string[] GetInfo()
+        private void SetFileInfo()
         {
             string[] info = new string[4];
             _directoryFileInfo = new DirectoryInfo(_fullPath);
@@ -83,7 +107,12 @@ namespace FileManager.WPF.Model
             }
             else { _logger.Error($"{_directoryFileInfo.Exists} - файл не найден при попытке получения информации о нем."); }
 
-            return info;
+            FileInfo = info;
+        }
+
+        public override string[] GetInfo()
+        {
+            return FileInfo;
         }
 
         /// <summary>
@@ -154,15 +183,46 @@ namespace FileManager.WPF.Model
 
         public void SetDirectoryes(ObservableCollection<BaseFile> dirs)
         {
-            if (_directoryes != null)
+            if (_subFiles != null)
                 return;   //на всякий случай (метод нужен только для drives)
             else
-                _directoryes = new string[dirs.Count];
+                _subFiles = new ObservableCollection<BaseFile>();
 
-            for (int i = 0; i < dirs.Count; i++)
+            foreach (var dir in dirs)
             {
-                _directoryes[i] = dirs[i].FullPath.ToString();
+                _subFiles.Add(dir);
             }
+        }
+
+        public void LoadFilesToSubFiles(string[] files)
+        {
+            foreach (string file in files)
+            {
+                _subFiles.Add((BaseFile)new FileModel(file) { IsDirectory = false, Name = new FileInfo(file).Name });
+            }
+        }
+
+        public void LoadDirectoryesToSubFiles(string[] directoryes)
+        {
+            foreach (string dir in directoryes)
+            {
+                string name = new DirectoryInfo(dir).Name;
+                if (name == "") name = dir;
+
+                BaseFile baseFile = (BaseFile)new DirectoryModel(dir) { IsDirectory = true, Name = name };
+                _subFiles.Add(baseFile);
+            }
+        }
+
+        private BaseFile GetDriverParent()
+        {
+            DirectoryModel directory = new DirectoryModel("MyComputer")
+            {
+                FullPath = "MyComputer",
+                Name = "MyComputer"
+            };
+            directory.LoadSubDirectoryes();
+            return directory;
         }
     }
 }

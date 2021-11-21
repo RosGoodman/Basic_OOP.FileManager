@@ -1,6 +1,8 @@
 ﻿
+using FileManager.WPF.Model;
 using FileManager.WPF.ViewModel;
 using NLog;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace FileManager.WPF

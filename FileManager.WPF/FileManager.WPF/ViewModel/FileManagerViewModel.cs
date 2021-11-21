@@ -1,7 +1,6 @@
 ﻿using FileManager.WPF.Command;
 using FileManager.WPF.Model;
 using FileManager.WPF.Services.WorkWithFiles;
-using FileManager.WPF.ViewModel.Controls;
 using NLog;
 using System;
 using System.Collections.ObjectModel;
@@ -16,7 +15,6 @@ namespace FileManager.WPF.ViewModel
 
         private DirectoryControl _directoryControl;
         private FileControl _fileControl;
-        private DriveControl _driveControl;
 
         private DirectoryModel _currentDirectory;
         private BaseFile _selectedFile;
@@ -24,6 +22,7 @@ namespace FileManager.WPF.ViewModel
         private string _fileInfo;
 
         private BaseFile _movableFile;
+        private bool _movingFileCut;    //вырезан / скопирован
 
         #endregion
 
@@ -34,6 +33,8 @@ namespace FileManager.WPF.ViewModel
         public RelayCommand GoToPreviousDirCommand { get; private set; }
         public RelayCommand ListBoxItemBackspaceCommand { get; private set; }
         public RelayCommand ListBoxItem_Ctrl_X_Command { get; private set; }
+        public RelayCommand ListBoxItem_Ctrl_C_Command { get; private set; }
+        public RelayCommand ListBoxItem_Ctrl_V_Command { get; private set; }
 
         public string FileInfo
         {
@@ -50,20 +51,21 @@ namespace FileManager.WPF.ViewModel
             get => _selectedFile;
             set
             {
+                
                 _selectedFile = value;
                 OnPropertyChanged("SelectedFile");
                 CurrentPath = _currentDirectory.FullPath;
-                if (SelectedFile != null) FileInfo = GetFileInfo();
+                if (SelectedFile != null && SelectedFile.FileInfo != null) FileInfo = GetFileInfo();
             }
         }
 
-        public ObservableCollection<BaseFile> Directoryes
+        public ObservableCollection<BaseFile> AllFilesInCurrentDir
         {
-            get => _directoryControl.Directoryes;
+            get => _directoryControl.AllFilesInDirectoiy;
             set
             {
-                _directoryControl.Directoryes = value;
-                OnPropertyChanged("Directoryes");
+                _directoryControl.AllFilesInDirectoiy = value;
+                OnPropertyChanged("AllFilesInCurrentDir");
             }
         }
 
@@ -83,25 +85,6 @@ namespace FileManager.WPF.ViewModel
             set
             {
                 _currentDirectory = value;
-
-                Directoryes = new ObservableCollection<BaseFile>();
-                //добавление директорий в список
-                if(CurrentDirectory.Directoryes != null)
-                {
-                    foreach (string dir in CurrentDirectory.Directoryes)
-                    {
-                        Directoryes.Add(new DirectoryModel(dir));
-                    }
-                }
-                
-                //добавление файлов в список
-                if(CurrentDirectory.Files != null)
-                {
-                    foreach (string file in CurrentDirectory.Files)
-                    {
-                        Directoryes.Add(new FileModel(_logger, file));
-                    }
-                }
                 OnPropertyChanged(nameof(CurrentDirectory));
             }
         }
@@ -119,12 +102,13 @@ namespace FileManager.WPF.ViewModel
             //создание экземпляров контроллеров
             _directoryControl = new DirectoryControl(_logger);
             _fileControl = new FileControl(_logger);
-            _driveControl = new DriveControl(_logger);
 
             //чтение последнего файла
             JSONFileReader fileReader = new JSONFileReader(_logger);
             CurrentDirectory = fileReader.GetLastDirectory();
-            SelectedFile = Directoryes[0];
+            CurrentDirectory.LoadSubDirectoryes();
+            AllFilesInCurrentDir = CurrentDirectory.SubFiles;
+            SelectedFile = AllFilesInCurrentDir[0];
 
             //подключение команд
             CreateCommand = new RelayCommand(CreateFileCommand_Execute);
@@ -132,6 +116,8 @@ namespace FileManager.WPF.ViewModel
             GoToPreviousDirCommand = new RelayCommand(GoToPreviousDirectory_Command);
             ListBoxItemBackspaceCommand = new RelayCommand(GoToPreviousDirectory_Command);
             ListBoxItem_Ctrl_X_Command = new RelayCommand(CutFile_Command);
+            ListBoxItem_Ctrl_C_Command = new RelayCommand(CopyFile_Command);
+            ListBoxItem_Ctrl_V_Command = new RelayCommand(PastFile_Command);
         }
 
         #region commands
@@ -146,11 +132,15 @@ namespace FileManager.WPF.ViewModel
         {
             _logger.Info($"Зпауск команды {nameof(OpenDir_Execute)}");
 
-            if (SelectedFile.IsDirectory && SelectedFile != null)
+            if (SelectedFile != null && SelectedFile.IsDirectory)
             {
                 CurrentDirectory = (DirectoryModel)SelectedFile;
-                if(Directoryes.Count>0)
-                    SelectedFile = Directoryes[0];
+
+                CurrentDirectory.LoadSubDirectoryes();
+                AllFilesInCurrentDir = CurrentDirectory.SubFiles;
+
+                if (AllFilesInCurrentDir.Count > 0)
+                    SelectedFile = AllFilesInCurrentDir[0];
             }
                 
             //else
@@ -162,64 +152,82 @@ namespace FileManager.WPF.ViewModel
             _logger.Info($"Зпауск команды {nameof(GoToPreviousDirectory_Command)}");
 
             BaseFile parent = CurrentDirectory.GetParent();
-
-            var prevDir = CurrentDirectory.FullPath;
             
-            if (Directoryes.Count > 0)
-            {
-                CurrentDirectory = (DirectoryModel)CurrentDirectory.GetParent();
-            }
-            
-            if(CurrentDirectory.FullPath == prevDir)
-            {
-                DirectoryModel curDir = new DirectoryModel(_logger, "");
-                curDir.SetDirectoryes(_driveControl.Drives);
-                CurrentDirectory = curDir;
-            }
-            SelectedFile = Directoryes[0];
+            CurrentDirectory = (DirectoryModel)CurrentDirectory.GetParent();
+            CurrentDirectory.LoadSubDirectoryes();
+            AllFilesInCurrentDir = CurrentDirectory.SubFiles;
+            SelectedFile = AllFilesInCurrentDir[0];
         }
 
         private void CutFile_Command()
         {
-            if (SelectedFile == null) return;
-            if (SelectedFile.IsDirectory)
-            {
-                _movableFile = SelectedFile;
-            }
+            RemamberMovableFile();
+            _movingFileCut = true;
+        }
+
+        private void CopyFile_Command()
+        {
+            RemamberMovableFile();
+            _movingFileCut = false;
+        }
+
+        private void PastFile_Command()
+        {
+            if (CurrentDirectory.Name == "MyComputer") return;
+
+            if (_movableFile.IsDirectory)
+                _directoryControl.Copy((DirectoryModel)_movableFile, CurrentDirectory.FullPath);
+            else
+                _fileControl.Copy((FileModel)_movableFile, CurrentDirectory.FullPath);
+
+            _movingFileCut = false;
         }
 
         #endregion
 
         #region methods
 
+        private void RemamberMovableFile()
+        {
+            if (SelectedFile == null) return;
+            _movableFile = SelectedFile;
+        }
+
         private string GetFileInfo()
         {
-            string[] infoArr = SelectedFile.GetInfo();
+            string[] infoArr = SelectedFile.FileInfo;
+            if (infoArr == null) return null;
 
-            string sizeString = string.Empty;
             decimal size = 0;
             if (!SelectedFile.IsDirectory) size = SelectedFile.GetSize();
+            string sizeString = ConvertByteSizeToString(size);
+
+            string info = $" Создан: {infoArr[2]}, Изменен: {infoArr[3]}{sizeString}";
+            return info;
+        }
+
+        private string ConvertByteSizeToString(decimal sizeInByte)
+        {
+            string sizeString = string.Empty;
             string postfix = "Byte";
 
             for (int i = 0; i < 4; i++)
             {
-                if (size > 1024)
+                if (sizeInByte > 1024)
                 {
-                    size /= 1024;
-                    if (Enum.IsDefined(typeof(SystemOfUnits), i+1))
-                        postfix = ((SystemOfUnits)i+1).ToString();
+                    sizeInByte /= 1024;
+                    if (Enum.IsDefined(typeof(SystemOfUnits), i + 2))
+                        postfix = ((SystemOfUnits)i + 2).ToString();
                 }
                 else break;
             }
 
-            if (size > 0)
+            if (sizeInByte > 0)
             {
-                size = Math.Round(size, 2);
-                sizeString = $", Размер: {size} {postfix}";
+                sizeInByte = Math.Round(sizeInByte, 2);
+                sizeString = $", Размер: {sizeInByte} {postfix}";
             }
-
-            string info = $" Создан: {infoArr[2]}, Изменен: {infoArr[3]}{sizeString}";
-            return info;
+            return sizeString;
         }
 
         #endregion

@@ -7,14 +7,14 @@ using System.IO;
 
 namespace FileManager.WPF.ViewModel
 {
-    internal class DirectoryControl : AbstrctBaseViewModel<DirectoryModel>
+    internal class DirectoryControl : AbstrctFileControl<DirectoryModel>
     {
         private static ILogger _logger;
         private DirectoryInfo _dirInfo;
         private ObservableCollection<BaseFile> _directories;
         private ObservableCollection<FileModel> _files;
 
-        public ObservableCollection<BaseFile> Directoryes
+        public ObservableCollection<BaseFile> AllFilesInDirectoiy
         {
             get => _directories;
             set
@@ -29,7 +29,7 @@ namespace FileManager.WPF.ViewModel
             _logger = logger;
             _logger.Debug("Создание экземпляра класса DirectoryControl.");
 
-            Directoryes = new ObservableCollection<BaseFile>();
+            AllFilesInDirectoiy = new ObservableCollection<BaseFile>();
         }
 
         #region methods
