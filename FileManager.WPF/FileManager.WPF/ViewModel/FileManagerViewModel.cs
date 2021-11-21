@@ -4,6 +4,7 @@ using FileManager.WPF.Services.WorkWithFiles;
 using NLog;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace FileManager.WPF.ViewModel
@@ -39,6 +40,11 @@ namespace FileManager.WPF.ViewModel
         public RelayCommand RenameFile_Command { get; private set; }
 
         public string NewFileName { get; set; }
+
+        public string BackImagePath
+        {
+            get => Path.GetFullPath("Images/previous.png");
+        }
 
         public string FileInfo
         {

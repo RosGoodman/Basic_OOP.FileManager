@@ -7,17 +7,10 @@
         xmlns:viewmodel="clr-namespace:FileManager.WPF.ViewModel" 
         d:DataContext="{d:DesignInstance Type=viewmodel:FileManagerViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1024">
-    <Window.Resources>
-        <ContextMenu x:Key="RightClick" StaysOpen="True">
-            <MenuItem Header="Cut"/>
-            <MenuItem Header="Copy"/>
-            <MenuItem Header="Past"/>
-            <MenuItem Header="Rename"/>
-            <MenuItem Header="Open"/>
-        </ContextMenu>
-    </Window.Resources>
+        Title="FileManager" Height="700" Width="1024">
+    
     <Grid Background="#FFC8C8C8">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
@@ -26,9 +19,13 @@
         
         <!--Header. Путь к текущей директрии-->
         <DockPanel LastChildFill="True">
-            <Button Name="BackButton" Margin="5,2,2,2" Height="26" FontSize="15" HorizontalAlignment="Left"
-                    Command="{Binding GoToPreviousDirCommand}">Back</Button>
-            <TextBox Name="PathString" Grid.Column="0" Margin="5,2,5,2" Background="#FFEFEAEA"
+            <Button Name="BackButton" Margin="5,2,2,2" Height="26" HorizontalAlignment="Left"
+                Command="{Binding GoToPreviousDirCommand}" Background="{x:Null}" BorderBrush="{x:Null}">
+                <StackPanel>
+                    <Image Width="22" Height="22" Source="{Binding Path=BackImagePath}"/>
+                </StackPanel>
+            </Button>
+            <TextBox Name="PathString" Grid.Column="0" Margin="5,2,5,2" Height="26" Background="#FFEFEAEA" FontSize="15"
                      Text="{Binding Path=CurrentPath}"/>
         </DockPanel>
         
@@ -50,15 +47,17 @@
                     <MenuItem Header="Open" Click="OpenFile_ButtonClick"/>
                     <MenuItem Header="Rename" Click="OpenDialogWindowForRename_ButtonClick"/>
                     <Separator/>
-                    <MenuItem Header="Cut"/>
-                    <MenuItem Header="Copy"/>
-                    <MenuItem Header="Past"/>
+                    <MenuItem Header="Cut" Click="CutFile_ButtonClick"/>
+                    <MenuItem Header="Copy" Click="CopyFile_ButtonClick"/>
+                    <MenuItem Header="Past" Click="PastFile_ButtonClick"/>
+                    <Separator/>
+                    <MenuItem Header="Get Info" Click="GetFileInfo_ButtonClick"
                 </ContextMenu>
             </ListBox.ContextMenu>
             
             <!--Шаблон айтемов-->
             <ListBox.ItemTemplate>
-            <DataTemplate>
+                <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <Image Width="20" Height="20" Source="{Binding Path=ImagePath}"/>
                         <TextBlock Text="{Binding Path=Name}" FontSize="15"></TextBlock>

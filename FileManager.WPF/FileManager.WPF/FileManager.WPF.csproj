@@ -11,6 +11,7 @@
     <None Remove="C:\Users\user252\.nuget\packages\nlog.config\4.7.12\contentFiles\any\any\NLog.config" />
     <None Remove="Images\file.png" />
     <None Remove="Images\folder.png" />
+    <None Remove="Images\previous.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +19,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\folder.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\previous.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -32,8 +32,21 @@ namespace FileManager.WPF
             DialogWindow dialogWindow = new DialogWindow(_viewModel);
             dialogWindow.DataContext = _viewModel;
             dialogWindow.ShowDialog();
+        }
 
-            //_viewModel.RenameFile_Command.Execute(null);
-        } 
+        private void CutFile_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.ListBoxItem_Ctrl_X_Command.Execute(null);
+        }
+
+        private void CopyFile_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.ListBoxItem_Ctrl_C_Command.Execute(null);
+        }
+
+        private void PastFile_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.ListBoxItem_Ctrl_V_Command.Execute(null);
+        }
     }
 }
