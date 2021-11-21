@@ -22,6 +22,7 @@ namespace FileManager.WPF.ViewModel
         private BaseFile _selectedFile;
         private string _currentPath;
         private string _fileInfo;
+        private string _selectFileSize;
 
         private BaseFile _movableFile;
         private bool _movingFileCut;    //вырезан / скопирован
@@ -45,7 +46,15 @@ namespace FileManager.WPF.ViewModel
         public string BackImagePath { get => Path.GetFullPath("Images/previous.png"); }
 
         public string[] SelectFileInfo { get; private set; }
-        public decimal SelectFileSize { get; private set; }
+        public string SelectFileSize
+        {
+            get => _selectFileSize;
+            private set
+            {
+                _selectFileSize = value;
+                OnPropertyChanged("SelectFileSize");
+            }
+        }
 
         public string FileInfo
         {
@@ -212,7 +221,8 @@ namespace FileManager.WPF.ViewModel
             SelectFileInfo = SelectedFile.GetInfo();
             await Task.Run(() =>
             {
-                SelectFileSize = SelectedFile.GetSize();
+                decimal sizeByte = SelectedFile.GetSize();
+                SelectFileSize = ConvertByteSizeToString(sizeByte);
             });
         }
 

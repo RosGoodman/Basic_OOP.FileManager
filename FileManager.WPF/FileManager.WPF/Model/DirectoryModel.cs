@@ -141,14 +141,9 @@ namespace FileManager.WPF.Model
                             dirs.Push(subDirPath);
                         }
                     }
-                    catch (UnauthorizedAccessException ex)
+                    catch
                     {
-                        _logger.Error($"{ex} - нет доступа к директории.");
-                        continue;
-                    }
-                    catch (DirectoryNotFoundException ex)
-                    {
-                        _logger.Error($"{ex} - директория не найдена.");
+                        _logger.Error($"нет доступа к директории.");
                         continue;
                     }
                 }
