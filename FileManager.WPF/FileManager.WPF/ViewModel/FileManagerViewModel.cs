@@ -36,6 +36,9 @@ namespace FileManager.WPF.ViewModel
         public RelayCommand ListBoxItem_Ctrl_X_Command { get; private set; }
         public RelayCommand ListBoxItem_Ctrl_C_Command { get; private set; }
         public RelayCommand ListBoxItem_Ctrl_V_Command { get; private set; }
+        public RelayCommand RenameFile_Command { get; private set; }
+
+        public string NewFileName { get; set; }
 
         public string FileInfo
         {
@@ -117,6 +120,7 @@ namespace FileManager.WPF.ViewModel
             ListBoxItem_Ctrl_X_Command = new RelayCommand(CutFile_Command);
             ListBoxItem_Ctrl_C_Command = new RelayCommand(CopyFile_Command);
             ListBoxItem_Ctrl_V_Command = new RelayCommand(PastFile_Command);
+            RenameFile_Command = new RelayCommand(MoveTo_Command);
         }
 
         #region commands
@@ -173,20 +177,26 @@ namespace FileManager.WPF.ViewModel
 
                 if (_movableFile.IsDirectory)
                 {
-                    //_directoryControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
-                    //if (_movingFileCut) _directoryControl.Delete(_movableFile.FullPath);
                     Copy(_directoryControl);
                 }
                 else
                 {
-                    //_fileControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
-                    //if(_movingFileCut) _fileControl.Delete(_movableFile.FullPath);
                     Copy(_fileControl);
                 }
 
                 RefreshList();
                 _movingFileCut = false;
             });
+        }
+
+        private void MoveTo_Command()
+        {
+            if (SelectedFile.IsDirectory)
+                _directoryControl.MoveTo(SelectedFile.FullPath, $"{SelectedFile.GetParent().FullPath}\\{NewFileName}");
+            else
+                _fileControl.MoveTo(SelectedFile.FullPath, $"{SelectedFile.GetParent().FullPath}\\{NewFileName}");
+
+            RefreshList();
         }
 
         #endregion

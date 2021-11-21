@@ -74,7 +74,7 @@ namespace FileManager.WPF.ViewModel
                 if (_dirInfo.Exists && !Directory.Exists(newPath))
                     _dirInfo.MoveTo(newPath);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error($"{ex} - ошибка при попытке перемещения директории.");
             }

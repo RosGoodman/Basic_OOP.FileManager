@@ -8,29 +8,65 @@
         d:DataContext="{d:DesignInstance Type=viewmodel:FileManagerViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1024">
+    <Window.Resources>
+        <ContextMenu x:Key="RightClick" StaysOpen="True">
+            <MenuItem Header="Cut"/>
+            <MenuItem Header="Copy"/>
+            <MenuItem Header="Past"/>
+            <MenuItem Header="Rename"/>
+            <MenuItem Header="Open"/>
+        </ContextMenu>
+    </Window.Resources>
     <Grid Background="#FFC8C8C8">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
+        
+        <!--Header. Путь к текущей директрии-->
         <DockPanel LastChildFill="True">
             <Button Name="BackButton" Margin="5,2,2,2" Height="26" FontSize="15" HorizontalAlignment="Left"
                     Command="{Binding GoToPreviousDirCommand}">Back</Button>
             <TextBox Name="PathString" Grid.Column="0" Margin="5,2,5,2" Background="#FFEFEAEA"
                      Text="{Binding Path=CurrentPath}"/>
         </DockPanel>
+        
+        <!--Файлы текущей папки-->
         <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1" 
                  ItemsSource="{Binding AllFilesInCurrentDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  SelectedItem="{Binding SelectedFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            
+            <!--Обработка двойного клюка-->
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="OpenFile_ButtonClick"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            
+            <!--Контекстное меню-->
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Open" Click="OpenFile_ButtonClick"/>
+                    <MenuItem Header="Rename" Click="OpenDialogWindowForRename_ButtonClick"/>
+                    <Separator/>
+                    <MenuItem Header="Cut"/>
+                    <MenuItem Header="Copy"/>
+                    <MenuItem Header="Past"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+            
+            <!--Шаблон айтемов-->
             <ListBox.ItemTemplate>
-                <DataTemplate>
+            <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <Image Width="20" Height="20" Source="{Binding Path=ImagePath}"/>
                         <TextBlock Text="{Binding Path=Name}" FontSize="15"></TextBlock>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            
+            <!--Привязка кнопок-->
             <ListBox.InputBindings>
                 <KeyBinding Gesture="Enter" Command="{Binding ListBoxItemEnterCommand}"/>
                 <KeyBinding Gesture="Backspace" Command="{Binding ListBoxItemBackspaceCommand}"/>
@@ -40,9 +76,9 @@
             </ListBox.InputBindings>
         </ListBox>
         
-            <TextBlock FontSize="11" Grid.Row="2" Margin="5,-1,5,2" VerticalAlignment="Top"
-                   Text="{Binding FileInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">sdfsdf
-            
-            </TextBlock>
+        <!--Информация о выбанном файле-->
+        <TextBlock FontSize="11" Grid.Row="2" Margin="5,-1,5,2" VerticalAlignment="Top"
+                Text="{Binding FileInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        </TextBlock>
     </Grid>
 </Window>
