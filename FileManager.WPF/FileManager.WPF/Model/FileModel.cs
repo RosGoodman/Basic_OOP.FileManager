@@ -56,13 +56,15 @@ namespace FileManager.WPF.Model
         private void SetFileInfo()
         {
             _fileInfo = new FileInfo(_fullPath);
-            string[] info = new string[4];
+            string[] info = new string[5];
             if (_fileInfo.Exists)
             {
                 info[0] = _fileInfo.Name;
                 info[1] = _fileInfo.FullName;
                 info[2] = _fileInfo.CreationTime.ToString();
                 info[3] = _fileInfo.LastWriteTime.ToString();
+                if (!this.IsDirectory) info[4] = "Файл";
+
             }
             else { _logger.Error($"{_fileInfo.Exists} - файл не найден при попытке получения информации о нем."); }
 

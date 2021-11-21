@@ -95,7 +95,7 @@ namespace FileManager.WPF.Model
 
         private void SetFileInfo()
         {
-            string[] info = new string[4];
+            string[] info = new string[5];
             _directoryFileInfo = new DirectoryInfo(_fullPath);
 
             if (_directoryFileInfo.Exists)
@@ -104,6 +104,7 @@ namespace FileManager.WPF.Model
                 info[1] = _directoryFileInfo.FullName;
                 info[2] = _directoryFileInfo.CreationTime.ToString();
                 info[3] = _directoryFileInfo.LastWriteTime.ToString();
+                if (this.IsDirectory) info[4] = "Папка с файлами";
             }
             else { _logger.Error($"{_directoryFileInfo.Exists} - файл не найден при попытке получения информации о нем."); }
 

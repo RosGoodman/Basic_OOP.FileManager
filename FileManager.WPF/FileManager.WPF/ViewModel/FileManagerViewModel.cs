@@ -38,13 +38,14 @@ namespace FileManager.WPF.ViewModel
         public RelayCommand ListBoxItem_Ctrl_C_Command { get; private set; }
         public RelayCommand ListBoxItem_Ctrl_V_Command { get; private set; }
         public RelayCommand RenameFile_Command { get; private set; }
+        public RelayCommand GetFileInfoCommand { get; private set; }
 
         public string NewFileName { get; set; }
 
-        public string BackImagePath
-        {
-            get => Path.GetFullPath("Images/previous.png");
-        }
+        public string BackImagePath { get => Path.GetFullPath("Images/previous.png"); }
+
+        public string[] SelectFileInfo { get; private set; }
+        public decimal SelectFileSize { get; private set; }
 
         public string FileInfo
         {
@@ -127,6 +128,7 @@ namespace FileManager.WPF.ViewModel
             ListBoxItem_Ctrl_C_Command = new RelayCommand(CopyFile_Command);
             ListBoxItem_Ctrl_V_Command = new RelayCommand(PastFile_Command);
             RenameFile_Command = new RelayCommand(MoveTo_Command);
+            GetFileInfoCommand = new RelayCommand(GetFileInfo_Command);
         }
 
         #region commands
@@ -203,6 +205,15 @@ namespace FileManager.WPF.ViewModel
                 _fileControl.MoveTo(SelectedFile.FullPath, $"{SelectedFile.GetParent().FullPath}\\{NewFileName}");
 
             RefreshList();
+        }
+
+        private async void GetFileInfo_Command()
+        {
+            SelectFileInfo = SelectedFile.GetInfo();
+            await Task.Run(() =>
+            {
+                SelectFileSize = SelectedFile.GetSize();
+            });
         }
 
         #endregion

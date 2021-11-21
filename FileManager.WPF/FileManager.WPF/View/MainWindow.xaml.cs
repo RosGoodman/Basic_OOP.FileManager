@@ -48,5 +48,14 @@ namespace FileManager.WPF
         {
             _viewModel.ListBoxItem_Ctrl_V_Command.Execute(null);
         }
+
+        private void GetFileInfo_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.GetFileInfoCommand.Execute(null);
+            FileInfoWindow infoWindow = new FileInfoWindow(_viewModel);
+            infoWindow.DataContext = _viewModel;
+            infoWindow.ShowDialog();
+        }
+        
     }
 }
