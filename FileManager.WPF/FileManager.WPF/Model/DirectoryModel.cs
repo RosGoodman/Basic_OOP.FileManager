@@ -3,12 +3,13 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
 namespace FileManager.WPF.Model
 {
-    public class DirectoryModel : BaseFile
+    public class DirectoryModel : BaseFile , INotifyPropertyChanged
     {
         //не уверен, что так хорошо, но быстро другого способа отделить обычную директорию от списка с дисками не придумал
         /// <summary> Найменование назначающееся директории с дисками. </summary>
@@ -22,8 +23,6 @@ namespace FileManager.WPF.Model
         /// <summary> Список файлов и дерикторий находящихся в текущей директории. </summary>
         public ObservableCollection<BaseFile> SubFiles { get => _subFiles; set => _subFiles = value; }
 
-        #region ctors
-
         /// <summary> Создние экземпляра класса DirectoryModel. </summary>
         /// <param name="logger"> Логгер. </param>
         /// <param name="filePath"> Полный путь директории. </param>
@@ -32,18 +31,11 @@ namespace FileManager.WPF.Model
         {
             logger = _logger;
             LoadMainData(filePath);
+            ImagePath = Path.GetFullPath("Images/folder.png");
         }
 
-        /// <summary> Создние экземпляра класса DirectoryModel. </summary>
-        /// <param name="filePath"> Полный путь директории. </param>
-        public DirectoryModel(string filePath)
-            : base(filePath)
-        {
-            LoadMainData(filePath);
-        }
-
-        #endregion
-
+        /// <summary> Загрузить основные данные для текущей директории. </summary>
+        /// <param name="filePath"> Полный путь к директории. </param>
         private void LoadMainData(string filePath)
         {
             IsDirectory = true;
@@ -52,8 +44,6 @@ namespace FileManager.WPF.Model
                 ChangeName(new DirectoryInfo(filePath).Name);
                 SetFileInfo();
             }
-
-            ImagePath = Path.GetFullPath("Images/folder.png");
         }
 
         /// <summary> Загрузить файлы и дериктории в коллекцию SubFiles. </summary>
@@ -67,14 +57,23 @@ namespace FileManager.WPF.Model
 
             if(FullPath != MainDriveDirectory)
             {
-                directoryes = Directory.GetDirectories(FullPath);
-                LoadDirectoryesToSubFiles(directoryes);
+                try 
+                {
+                    directoryes = Directory.GetDirectories(FullPath);
+                    LoadDirectoryesToSubFiles(directoryes);
+                }
+                catch(UnauthorizedAccessException ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
 
-                files = Directory.GetFiles(FullPath);
-                LoadFilesToSubFiles(files);
+                try 
+                {
+                    files = Directory.GetFiles(FullPath);
+                    AddFilesToSubFiles(files);
+                }
+                catch (UnauthorizedAccessException ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
             }
         }
 
+        /// <summary> Загрузить списко дисков в SubFiles. </summary>
         public void LoadDrivesInSubFiles()
         {
             string[] directoryes;
@@ -93,6 +92,8 @@ namespace FileManager.WPF.Model
             }
         }
 
+        /// <summary> Получить родительскую директорию. </summary>
+        /// <returns> Родительская директория. </returns>
         public override BaseFile GetParent()
         {
             if (FullPath == MainDriveDirectory) return this;
@@ -101,9 +102,11 @@ namespace FileManager.WPF.Model
 
             if (parent == null) return GetDirectoryMyComputerFromDrives();
 
-            return new DirectoryModel(parent.FullName);
+            return new DirectoryModel(_logger, parent.FullName);
         }
 
+        /// <summary> Получить размер текущей директории. </summary>
+        /// <returns> Размер директории KByte. </returns>
         public override decimal GetSize()
         {
             decimal byteSize = SafeEnumerateFiles(_fullPath, "*.*", SearchOption.AllDirectories).Sum(n => new FileInfo(n).Length);
@@ -111,6 +114,7 @@ namespace FileManager.WPF.Model
             return kByteSize;
         }
 
+        /// <summary> Установить информацию о файле. </summary>
         private void SetFileInfo()
         {
             string[] info = new string[5];
@@ -129,6 +133,8 @@ namespace FileManager.WPF.Model
             FileInfo = info;
         }
 
+        /// <summary> Получить информацию о директории. </summary>
+        /// <returns> Массив строк с информацией о директории. </returns>
         public override string[] GetInfo()
         {
             return FileInfo;
@@ -159,9 +165,9 @@ namespace FileManager.WPF.Model
                             dirs.Push(subDirPath);
                         }
                     }
-                    catch(Exception ex)
+                    catch(UnauthorizedAccessException ex)
                     {
-                        //_logger.Error($"{ex} -нет доступа к директории.");
+                        _logger.Error($"{ex} -нет доступа к директории.");
                         continue;
                     }
                 }
@@ -189,32 +195,38 @@ namespace FileManager.WPF.Model
             }
         }
 
+        /// <summary> Строчное представление класса. </summary>
+        /// <returns> Имя файла. </returns>
         public override string ToString()
         {
             _directoryFileInfo = new DirectoryInfo(FullPath);
             return _directoryFileInfo.Name;
         }
 
-        public void SetDirectoryes(ObservableCollection<BaseFile> dirs)
-        {
-            if (_subFiles != null)
-                return;   //на всякий случай (метод нужен только для drives)
-            else
-                _subFiles = new ObservableCollection<BaseFile>();
+        /// <summary> Добавить список директорий содержащихся в текущей. </summary>
+        /// <param name="dirs"> Добавляемые директории. </param>
+        //public void AddDirectoryesInSubFilesList(ObservableCollection<BaseFile> dirs)
+        //{
+        //    //if (_subFiles != null)
+        //    //    return;   //на всякий случай (метод нужен только для drives)
+        //    //else
+        //        _subFiles = new ObservableCollection<BaseFile>();
 
-            foreach (var dir in dirs)
-            {
-                _subFiles.Add(dir);
-            }
-        }
+        //    foreach (var dir in dirs)
+        //    {
+        //        _subFiles.Add(dir);
+        //    }
+        //}
 
-        public void LoadFilesToSubFiles(string[] files)
+        /// <summary> Добавить список файлов содержащихся в текущей директории. </summary>
+        /// <param name="files"> Список файлов. </param>
+        private void AddFilesToSubFiles(string[] files)
         {
             foreach (string file in files)
             {
                 try
                 {
-                    _subFiles.Add(new FileModel(file)
+                    _subFiles.Add(new FileModel(_logger, file)
                     { 
                         IsDirectory = false, 
                         Name = new FileInfo(file).Name 
@@ -224,6 +236,8 @@ namespace FileManager.WPF.Model
             }
         }
 
+        /// <summary> Добавить список директорий в SubFiles. </summary>
+        /// <param name="directoryes"> Список директорий. </param>
         public void LoadDirectoryesToSubFiles(string[] directoryes)
         {
             foreach (string dir in directoryes)
@@ -233,7 +247,7 @@ namespace FileManager.WPF.Model
                     string name = new DirectoryInfo(dir).Name;
                     if (name == "") name = dir;
 
-                    BaseFile baseFile = new DirectoryModel(dir)
+                    BaseFile baseFile = new DirectoryModel(_logger, dir)
                     { 
                         IsDirectory = true,
                         Name = name 
@@ -247,7 +261,7 @@ namespace FileManager.WPF.Model
 
         private BaseFile GetDirectoryMyComputerFromDrives()
         {
-            DirectoryModel directory = new DirectoryModel(MainDriveDirectory)
+            DirectoryModel directory = new DirectoryModel(_logger, MainDriveDirectory)
             {
                 FullPath = MainDriveDirectory,
                 Name = MainDriveDirectory

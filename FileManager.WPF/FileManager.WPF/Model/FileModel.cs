@@ -7,16 +7,9 @@ namespace FileManager.WPF.Model
     internal class FileModel : BaseFile
     {
         private FileInfo _fileInfo;
-        
+
         public FileModel(ILogger logger, string filePath)
             : base(logger, filePath)
-        {
-            IsDirectory = false;
-            SetFileInfo();
-            ImagePath = "Resources/Images/file.png";
-        }
-
-        public FileModel(string filePath) : base(filePath)
         {
             IsDirectory = false;
             SetFileInfo();

@@ -297,7 +297,7 @@ namespace FileManager.WPF.ViewModel
             if (sizeInByte > 0)
             {
                 sizeInByte = Math.Round(sizeInByte, 2);
-                sizeString = $", Размер: {sizeInByte} {postfix}";
+                sizeString = $"Размер: {sizeInByte} {postfix}";
             }
             return sizeString;
         }

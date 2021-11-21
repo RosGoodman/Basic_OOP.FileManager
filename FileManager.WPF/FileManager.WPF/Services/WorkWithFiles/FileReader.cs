@@ -25,7 +25,7 @@ namespace FileManager.WPF.Services.WorkWithFiles
             if (json != string.Empty)
                 return Deserialize(json);
 
-            return new DirectoryModel("C:\\");
+            return new DirectoryModel(_logger, "C:\\");
         }
 
         private DirectoryModel Deserialize(string json)
