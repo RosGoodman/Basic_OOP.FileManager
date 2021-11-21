@@ -6,7 +6,7 @@ namespace FileManager.WPF.ViewModel
 {
     internal abstract class AbstrctFileControl<T> : BaseViewModel, IFileControl<T> where T : class
     {
-        public virtual void Copy(T file, string newPath)
+        public virtual void Copy(string name, string copyDir, string newPath)
         {
             throw new System.NotImplementedException();
         }

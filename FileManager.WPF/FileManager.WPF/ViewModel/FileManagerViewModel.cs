@@ -4,6 +4,7 @@ using FileManager.WPF.Services.WorkWithFiles;
 using NLog;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace FileManager.WPF.ViewModel
 {
@@ -106,9 +107,7 @@ namespace FileManager.WPF.ViewModel
             //чтение последнего файла
             JSONFileReader fileReader = new JSONFileReader(_logger);
             CurrentDirectory = fileReader.GetLastDirectory();
-            CurrentDirectory.LoadSubDirectoryes();
-            AllFilesInCurrentDir = CurrentDirectory.SubFiles;
-            SelectedFile = AllFilesInCurrentDir[0];
+            RefreshList();
 
             //подключение команд
             CreateCommand = new RelayCommand(CreateFileCommand_Execute);
@@ -171,21 +170,32 @@ namespace FileManager.WPF.ViewModel
             _movingFileCut = false;
         }
 
-        private void PastFile_Command()
+        private async void PastFile_Command()
         {
-            if (CurrentDirectory.Name == "MyComputer") return;
+            await Task.Run(() =>
+            {
+                if (CurrentDirectory.Name == "MyComputer") return;
 
-            if (_movableFile.IsDirectory)
-                _directoryControl.Copy((DirectoryModel)_movableFile, CurrentDirectory.FullPath);
-            else
-                _fileControl.Copy((FileModel)_movableFile, CurrentDirectory.FullPath);
+                if (_movableFile.IsDirectory)
+                    _directoryControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
+                else
+                    _fileControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
 
-            _movingFileCut = false;
+                RefreshList();
+                _movingFileCut = false;
+            });
         }
 
         #endregion
 
         #region methods
+
+        private void RefreshList()
+        {
+            CurrentDirectory.LoadSubDirectoryes();
+            AllFilesInCurrentDir = CurrentDirectory.SubFiles;
+            SelectedFile = AllFilesInCurrentDir[0];
+        }
 
         private void RemamberMovableFile()
         {

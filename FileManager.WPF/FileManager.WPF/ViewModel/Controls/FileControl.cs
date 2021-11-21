@@ -31,13 +31,13 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        public override void Copy(FileModel file, string newPath)
+        public override void Copy(string fileName, string currentDir, string newPath)
         {
             try
             {
-                _fileInfo = new FileInfo(file.FullPath);
+                _fileInfo = new FileInfo(currentDir);
                 if (_fileInfo.Exists)
-                    File.Copy(file.FullPath, newPath + file.Name, true);
+                    File.Copy(currentDir, newPath + "\\" + fileName, true);
             }
             catch(Exception ex)
             {

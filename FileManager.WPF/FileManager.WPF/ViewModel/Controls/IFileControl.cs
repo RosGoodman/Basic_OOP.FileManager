@@ -5,7 +5,7 @@ namespace FileManager.WPF.ViewModel
     {
         public void Create(string path);
 
-        public void Copy(T file, string newPath);
+        public void Copy(string name, string copyDir, string newPath);
 
         public void Delete(T dir);
 
