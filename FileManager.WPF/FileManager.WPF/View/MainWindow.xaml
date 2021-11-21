@@ -22,21 +22,15 @@
             <ColumnDefinition Width="110"/>
         </Grid.ColumnDefinitions>
         
-        <!--Header. Путь к текущей директрии-->
-        <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Margin="3">
-            <Button Name="BackButton" Margin="5,2,2,2" Height="26" HorizontalAlignment="Left" Grid.Column="0"
-                Command="{Binding GoToPreviousDirCommand}" Background="{x:Null}" BorderBrush="{x:Null}">
-                <StackPanel>
-                    <Image Width="22" Height="22" Source="{Binding Path=BackImagePath}"/>
-                </StackPanel>
-            </Button>
-            <TextBox Name="PathString" Margin="5,2,5,2" Height="26" Background="#FFEFEAEA" FontSize="15" MinWidth="400" HorizontalAlignment="Center"
-                     Text="{Binding Path=CurrentPath}"/>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="3">
-            <TextBox Grid.Column="2" HorizontalAlignment="Center" Width="100" Margin="5,2,5,2" MinWidth="100" Height="26"
-                     KeyDown="TextBox_KeyDown" Text="{Binding Path=SearchLine, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        </StackPanel>
+        <!--Header-->
+        <Button Grid.Column="0" Margin="5,3,0,3" Command="{Binding GoToPreviousDirCommand}" BorderBrush="{x:Null}">
+            <StackPanel>
+                <Image Width="22" Height="22" Source="{Binding Path=BackImagePath}"/>
+            </StackPanel>
+        </Button>
+        <TextBox Margin="3" HorizontalAlignment="Stretch" Background="#FFEFEAEA" Grid.Column="1" Text="{Binding Path=CurrentPath}"/>
+        <TextBox Grid.Column="2" HorizontalAlignment="Center" Width="100" Margin="0,3,5,3" MinWidth="100" Height="26" KeyDown="TextBox_KeyDown"
+                 Text="{Binding Path=SearchLine, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         
         <!--Файлы текущей папки-->
         <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1"  Grid.ColumnSpan="3"

@@ -10,31 +10,44 @@ namespace FileManager.WPF.Model
 {
     public class DirectoryModel : BaseFile
     {
+        //не уверен, что так хорошо, но быстро другого способа отделить обычную директорию от списка с дисками не придумал
+        /// <summary> Найменование назначающееся директории с дисками. </summary>
+        public const string MainDriveDirectory = "MyComputer";
+
         private DirectoryInfo _directoryFileInfo;
         private ObservableCollection<BaseFile> _subFiles;
 
-        public ObservableCollection<BaseFile> SubFiles
-        {
-            get => _subFiles;
-            set => _subFiles = value;
-        }
+        private static ILogger _logger;
 
+        /// <summary> Список файлов и дерикторий находящихся в текущей директории. </summary>
+        public ObservableCollection<BaseFile> SubFiles { get => _subFiles; set => _subFiles = value; }
+
+        #region ctors
+
+        /// <summary> Создние экземпляра класса DirectoryModel. </summary>
+        /// <param name="logger"> Логгер. </param>
+        /// <param name="filePath"> Полный путь директории. </param>
         public DirectoryModel(ILogger logger, string filePath)
             : base(logger, filePath)
         {
+            logger = _logger;
             LoadMainData(filePath);
         }
 
+        /// <summary> Создние экземпляра класса DirectoryModel. </summary>
+        /// <param name="filePath"> Полный путь директории. </param>
         public DirectoryModel(string filePath)
             : base(filePath)
         {
             LoadMainData(filePath);
         }
 
+        #endregion
+
         private void LoadMainData(string filePath)
         {
             IsDirectory = true;
-            if (filePath != "MyComputer")
+            if (filePath != MainDriveDirectory)
             {
                 ChangeName(new DirectoryInfo(filePath).Name);
                 SetFileInfo();
@@ -43,47 +56,52 @@ namespace FileManager.WPF.Model
             ImagePath = Path.GetFullPath("Images/folder.png");
         }
 
+        /// <summary> Загрузить файлы и дериктории в коллекцию SubFiles. </summary>
         public void LoadSubDirectoryes()
         {
-            string[] directoryes;
             string[] files;
             _subFiles = new ObservableCollection<BaseFile>();
 
-            if (FullPath == "MyComputer")
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            string[] directoryes = new string[drives.Length];
+
+            if(FullPath != MainDriveDirectory)
+            {
+                directoryes = Directory.GetDirectories(FullPath);
+                LoadDirectoryesToSubFiles(directoryes);
+
+                files = Directory.GetFiles(FullPath);
+                LoadFilesToSubFiles(files);
+            }
+        }
+
+        public void LoadDrivesInSubFiles()
+        {
+            string[] directoryes;
+            _subFiles = new ObservableCollection<BaseFile>();
+
+            if (FullPath == MainDriveDirectory)
             {
                 DriveInfo[] drives = DriveInfo.GetDrives();
                 directoryes = new string[drives.Length];
 
-                for(int i = 0; i < drives.Length; i++)
+                for (int i = 0; i < drives.Length; i++)
                 {
                     directoryes[i] = drives[i].Name;
                 }
                 LoadDirectoryesToSubFiles(directoryes);
             }
-
-            try
-            {
-                directoryes = Directory.GetDirectories(FullPath);
-                LoadDirectoryesToSubFiles(directoryes);
-            }
-            catch { }
-            try
-            {
-                files = Directory.GetFiles(FullPath);
-                LoadFilesToSubFiles(files);
-            }
-            catch { }
         }
 
         public override BaseFile GetParent()
         {
-            if (FullPath == "MyComputer") return this;
+            if (FullPath == MainDriveDirectory) return this;
             _directoryFileInfo = new DirectoryInfo(FullPath);
             var parent = _directoryFileInfo.Parent;
 
-            if (parent == null) return GetDriverParent();
+            if (parent == null) return GetDirectoryMyComputerFromDrives();
 
-            return (BaseFile)new DirectoryModel(parent.FullName);
+            return new DirectoryModel(parent.FullName);
         }
 
         public override decimal GetSize()
@@ -141,9 +159,9 @@ namespace FileManager.WPF.Model
                             dirs.Push(subDirPath);
                         }
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        _logger.Error($"нет доступа к директории.");
+                        //_logger.Error($"{ex} -нет доступа к директории.");
                         continue;
                     }
                 }
@@ -194,7 +212,15 @@ namespace FileManager.WPF.Model
         {
             foreach (string file in files)
             {
-                _subFiles.Add((BaseFile)new FileModel(file) { IsDirectory = false, Name = new FileInfo(file).Name });
+                try
+                {
+                    _subFiles.Add(new FileModel(file)
+                    { 
+                        IsDirectory = false, 
+                        Name = new FileInfo(file).Name 
+                    });
+                }
+                catch { }
             }
         }
 
@@ -202,22 +228,31 @@ namespace FileManager.WPF.Model
         {
             foreach (string dir in directoryes)
             {
-                string name = new DirectoryInfo(dir).Name;
-                if (name == "") name = dir;
+                try
+                {
+                    string name = new DirectoryInfo(dir).Name;
+                    if (name == "") name = dir;
 
-                BaseFile baseFile = (BaseFile)new DirectoryModel(dir) { IsDirectory = true, Name = name };
-                _subFiles.Add(baseFile);
+                    BaseFile baseFile = new DirectoryModel(dir)
+                    { 
+                        IsDirectory = true,
+                        Name = name 
+                    };
+
+                    _subFiles.Add(baseFile);
+                }
+                catch { }
             }
         }
 
-        private BaseFile GetDriverParent()
+        private BaseFile GetDirectoryMyComputerFromDrives()
         {
-            DirectoryModel directory = new DirectoryModel("MyComputer")
+            DirectoryModel directory = new DirectoryModel(MainDriveDirectory)
             {
-                FullPath = "MyComputer",
-                Name = "MyComputer"
+                FullPath = MainDriveDirectory,
+                Name = MainDriveDirectory
             };
-            directory.LoadSubDirectoryes();
+            directory.LoadDrivesInSubFiles();
             return directory;
         }
     }

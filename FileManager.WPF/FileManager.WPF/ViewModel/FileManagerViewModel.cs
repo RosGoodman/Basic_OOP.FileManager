@@ -175,7 +175,7 @@ namespace FileManager.WPF.ViewModel
 
             BaseFile parent = CurrentDirectory.GetParent();
             
-            CurrentDirectory = (DirectoryModel)CurrentDirectory.GetParent();
+            CurrentDirectory = (DirectoryModel)parent;
             RefreshList();
         }
 
@@ -195,7 +195,7 @@ namespace FileManager.WPF.ViewModel
         {
             await Task.Run(() =>
             {
-                if (CurrentDirectory.Name == "MyComputer") return;
+                if (CurrentDirectory.Name == DirectoryModel.MainDriveDirectory) return;
 
                 if (_movableFile.IsDirectory)
                 {
@@ -249,7 +249,12 @@ namespace FileManager.WPF.ViewModel
 
         private void RefreshList()
         {
-            CurrentDirectory.LoadSubDirectoryes();
+            //если директория с дисками, то переход в метод с driveInfo
+            if(CurrentDirectory.Name == DirectoryModel.MainDriveDirectory)
+                CurrentDirectory.LoadDrivesInSubFiles();
+            else
+                CurrentDirectory.LoadSubDirectoryes();
+
             AllFilesInCurrentDir = CurrentDirectory.SubFiles;
             SelectedFile = AllFilesInCurrentDir[0];
         }

@@ -36,6 +36,6 @@
             <TextBlock Text="{Binding SelectFileInfo[1]}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12"></TextBlock>
 
             <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12">Размер:</TextBlock>
-            <TextBlock Text="{Binding SelectFileSize}" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12"></TextBlock>
+            <TextBox Text="{Binding SelectFileSize, Mode=OneWay}" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12" BorderBrush="{x:Null}" IsReadOnly="True"></TextBox>
     </Grid>
 </Window>
