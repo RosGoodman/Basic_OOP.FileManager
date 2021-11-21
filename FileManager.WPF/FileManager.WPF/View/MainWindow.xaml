@@ -30,11 +30,13 @@
                     <Image Width="22" Height="22" Source="{Binding Path=BackImagePath}"/>
                 </StackPanel>
             </Button>
-            <TextBox Name="PathString" Margin="5,2,5,2" Height="26" Background="#FFEFEAEA" FontSize="15" MinWidth="400" Width="1440" HorizontalAlignment="Center"
+            <TextBox Name="PathString" Margin="5,2,5,2" Height="26" Background="#FFEFEAEA" FontSize="15" MinWidth="400" HorizontalAlignment="Center"
                      Text="{Binding Path=CurrentPath}"/>
         </StackPanel>
-        <TextBox Grid.Column="2" HorizontalAlignment="Center" Width="100" Margin="5,2,5,2" MinWidth="100" Height="26"
+        <StackPanel Grid.Row="0" Grid.Column="3">
+            <TextBox Grid.Column="2" HorizontalAlignment="Center" Width="100" Margin="5,2,5,2" MinWidth="100" Height="26"
                      KeyDown="TextBox_KeyDown" Text="{Binding Path=SearchLine, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        </StackPanel>
         
         <!--Файлы текущей папки-->
         <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1"  Grid.ColumnSpan="3"
