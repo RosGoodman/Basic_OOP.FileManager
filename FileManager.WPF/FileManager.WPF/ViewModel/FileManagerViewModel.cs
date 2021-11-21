@@ -52,11 +52,11 @@ namespace FileManager.WPF.ViewModel
             get => _selectedFile;
             set
             {
-                
                 _selectedFile = value;
-                OnPropertyChanged("SelectedFile");
                 CurrentPath = _currentDirectory.FullPath;
                 if (SelectedFile != null && SelectedFile.FileInfo != null) FileInfo = GetFileInfo();
+
+                OnPropertyChanged("SelectedFile");
             }
         }
 
@@ -141,9 +141,6 @@ namespace FileManager.WPF.ViewModel
                 if (AllFilesInCurrentDir.Count > 0)
                     SelectedFile = AllFilesInCurrentDir[0];
             }
-                
-            //else
-                // try open
         }
 
         private void GoToPreviousDirectory_Command()
@@ -153,9 +150,7 @@ namespace FileManager.WPF.ViewModel
             BaseFile parent = CurrentDirectory.GetParent();
             
             CurrentDirectory = (DirectoryModel)CurrentDirectory.GetParent();
-            CurrentDirectory.LoadSubDirectoryes();
-            AllFilesInCurrentDir = CurrentDirectory.SubFiles;
-            SelectedFile = AllFilesInCurrentDir[0];
+            RefreshList();
         }
 
         private void CutFile_Command()
@@ -177,9 +172,17 @@ namespace FileManager.WPF.ViewModel
                 if (CurrentDirectory.Name == "MyComputer") return;
 
                 if (_movableFile.IsDirectory)
-                    _directoryControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
+                {
+                    //_directoryControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
+                    //if (_movingFileCut) _directoryControl.Delete(_movableFile.FullPath);
+                    Copy(_directoryControl);
+                }
                 else
-                    _fileControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
+                {
+                    //_fileControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
+                    //if(_movingFileCut) _fileControl.Delete(_movableFile.FullPath);
+                    Copy(_fileControl);
+                }
 
                 RefreshList();
                 _movingFileCut = false;
@@ -189,6 +192,13 @@ namespace FileManager.WPF.ViewModel
         #endregion
 
         #region methods
+
+        private void Copy(IFileControl fileControl)
+        {
+            fileControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
+            if (_movingFileCut) 
+                fileControl.Delete(_movableFile.FullPath);
+        }
 
         private void RefreshList()
         {

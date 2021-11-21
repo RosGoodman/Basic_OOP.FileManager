@@ -1,12 +1,11 @@
 ﻿
-using FileManager.WPF.Model;
 using NLog;
 using System;
 using System.IO;
 
 namespace FileManager.WPF.ViewModel
 {
-    internal class FileControl : AbstrctFileControl<FileModel>
+    internal class FileControl : AbstrctFileControl
     {
         private static ILogger _logger;
         private FileInfo _fileInfo;
@@ -45,13 +44,13 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        public override void Delete(FileModel file)
+        public override void Delete(string filePath)
         {
             try
             {
-                _fileInfo = new FileInfo(file.FullPath);
+                _fileInfo = new FileInfo(filePath);
                 if (_fileInfo.Exists)
-                    File.Delete(file.FullPath);
+                    File.Delete(filePath);
             }
             catch(Exception ex)
             {
@@ -59,11 +58,11 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        public override void MoveTo(FileModel file, string newPath)
+        public override void MoveTo(string file, string newPath)
         {
             try
             {
-                _fileInfo = new FileInfo(file.FullPath);
+                _fileInfo = new FileInfo(file);
                 if (_fileInfo.Exists && !File.Exists(newPath))
                     _fileInfo.MoveTo(newPath);
             }

@@ -1,14 +1,14 @@
 ﻿
 namespace FileManager.WPF.ViewModel
 {
-    internal interface IFileControl<T> where T : class
-    {
+    internal interface IFileControl
+    { 
         public void Create(string path);
 
         public void Copy(string name, string copyDir, string newPath);
 
-        public void Delete(T dir);
+        public void Delete(string dir);
 
-        public void MoveTo(T dir, string newPath);
+        public void MoveTo(string dir, string newPath);
     }
 }

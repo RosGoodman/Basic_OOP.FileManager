@@ -7,7 +7,7 @@ using System.IO;
 
 namespace FileManager.WPF.ViewModel
 {
-    internal class DirectoryControl : AbstrctFileControl<DirectoryModel>
+    internal class DirectoryControl : AbstrctFileControl
     {
         private static ILogger _logger;
         private DirectoryInfo _dirInfo;
@@ -54,11 +54,11 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        public override void Delete(DirectoryModel dir)
+        public override void Delete(string dirPath)
         {
             try
             {
-                Directory.Delete(dir.FullPath, true);
+                Directory.Delete(dirPath, true);
             }
             catch (Exception ex)
             {
@@ -66,11 +66,11 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-        public override void MoveTo(DirectoryModel dir, string newPath)
+        public override void MoveTo(string dirPath, string newPath)
         {
             try
             {
-                _dirInfo = new DirectoryInfo(dir.FullPath);
+                _dirInfo = new DirectoryInfo(dirPath);
                 if (_dirInfo.Exists && !Directory.Exists(newPath))
                     _dirInfo.MoveTo(newPath);
             }

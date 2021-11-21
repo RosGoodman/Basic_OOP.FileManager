@@ -4,7 +4,7 @@ using System;
 
 namespace FileManager.WPF.ViewModel
 {
-    internal abstract class AbstrctFileControl<T> : BaseViewModel, IFileControl<T> where T : class
+    internal abstract class AbstrctFileControl : BaseViewModel, IFileControl
     {
         public virtual void Copy(string name, string copyDir, string newPath)
         {
@@ -16,12 +16,12 @@ namespace FileManager.WPF.ViewModel
             throw new System.NotImplementedException();
         }
 
-        public virtual void Delete(T dir)
+        public virtual void Delete(string dir)
         {
             throw new System.NotImplementedException();
         }
 
-        public virtual void MoveTo(T dir, string newPath)
+        public virtual void MoveTo(string dir, string newPath)
         {
             throw new System.NotImplementedException();
         }
