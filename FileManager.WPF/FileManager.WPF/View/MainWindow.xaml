@@ -16,21 +16,28 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="110"/>
+        </Grid.ColumnDefinitions>
         
         <!--Header. Путь к текущей директрии-->
-        <DockPanel LastChildFill="True">
-            <Button Name="BackButton" Margin="5,2,2,2" Height="26" HorizontalAlignment="Left"
+        <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" Margin="3">
+            <Button Name="BackButton" Margin="5,2,2,2" Height="26" HorizontalAlignment="Left" Grid.Column="0"
                 Command="{Binding GoToPreviousDirCommand}" Background="{x:Null}" BorderBrush="{x:Null}">
                 <StackPanel>
                     <Image Width="22" Height="22" Source="{Binding Path=BackImagePath}"/>
                 </StackPanel>
             </Button>
-            <TextBox Name="PathString" Grid.Column="0" Margin="5,2,5,2" Height="26" Background="#FFEFEAEA" FontSize="15"
+            <TextBox Name="PathString" Margin="5,2,5,2" Height="26" Background="#FFEFEAEA" FontSize="15" MinWidth="400" Width="1440" HorizontalAlignment="Center"
                      Text="{Binding Path=CurrentPath}"/>
-        </DockPanel>
+        </StackPanel>
+        <TextBox Grid.Column="2" HorizontalAlignment="Center" Width="100" Margin="5,2,5,2" MinWidth="100" Height="26"
+                     KeyDown="TextBox_KeyDown" Text="{Binding Path=SearchLine, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         
         <!--Файлы текущей папки-->
-        <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1" 
+        <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1"  Grid.ColumnSpan="3"
                  ItemsSource="{Binding AllFilesInCurrentDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  SelectedItem="{Binding SelectedFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             
@@ -76,7 +83,7 @@
         </ListBox>
         
         <!--Информация о выбанном файле-->
-        <TextBlock FontSize="11" Grid.Row="2" Margin="5,-1,5,2" VerticalAlignment="Top"
+        <TextBlock FontSize="11" Grid.Row="2" Grid.ColumnSpan="3" Margin="5,-1,5,2" VerticalAlignment="Top"
                 Text="{Binding FileInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         </TextBlock>
     </Grid>

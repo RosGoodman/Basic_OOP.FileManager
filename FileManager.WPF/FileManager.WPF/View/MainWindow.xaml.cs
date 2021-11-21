@@ -3,6 +3,7 @@ using FileManager.WPF.View;
 using FileManager.WPF.ViewModel;
 using NLog;
 using System.Windows;
+using System.Windows.Input;
 
 namespace FileManager.WPF
 {
@@ -56,6 +57,10 @@ namespace FileManager.WPF
             infoWindow.DataContext = _viewModel;
             infoWindow.ShowDialog();
         }
-        
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter) _viewModel.FindCommand.Execute(null);
+        }
     }
 }
