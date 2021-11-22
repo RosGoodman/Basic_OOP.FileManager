@@ -52,6 +52,8 @@ namespace FileManager.WPF.ViewModel
         public RelayCommand GetFileInfoCommand { get; private set; }
         /// <summary> Комангда "Найти." </summary>
         public RelayCommand FindCommand { get;private set; }
+        /// <summary> Удалить выбранный файл. </summary>
+        public RelayCommand DeleteCommand { get;private set; }
 
         #endregion
 
@@ -166,6 +168,7 @@ namespace FileManager.WPF.ViewModel
             RenameFile_Command = new RelayCommand(MoveTo_Command);
             GetFileInfoCommand = new RelayCommand(GetFileInfo_Command);
             FindCommand = new RelayCommand(Find_Command);
+            DeleteCommand = new RelayCommand(Delete_Command);
         }
 
         #region commands
@@ -266,6 +269,20 @@ namespace FileManager.WPF.ViewModel
         private async void Find_Command()
         {
 
+        }
+
+        /// <summary> Удалить выбранный файл. </summary>
+        private async void Delete_Command()
+        {
+            await Task.Run(() =>
+            {
+                if (SelectedFile.IsDirectory)
+                    _directoryControl.Delete(SelectedFile.FullPath);
+                else
+                    _fileControl?.Delete(SelectedFile.FullPath);
+            });
+            
+            RefreshList();
         }
 
         #endregion

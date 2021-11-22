@@ -23,6 +23,8 @@ namespace FileManager.WPF
             DataContext = _viewModel;
         }
 
+        #region events
+
         /// <summary> Открыть файл. </summary>
         /// <param name="sender"> Источник. </param>
         /// <param name="e"> Аргумент. </param>
@@ -83,5 +85,15 @@ namespace FileManager.WPF
         {
             if(e.Key == Key.Enter) _viewModel.FindCommand.Execute(null);
         }
+
+        /// <summary> Удалить  выбранный файл. </summary>
+        /// <param name="sender"> Источник. </param>
+        /// <param name="e"> Аргумент. </param>
+        private void Delete_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.DeleteCommand.Execute(null);
+        }
+
+        #endregion
     }
 }

@@ -132,8 +132,13 @@ namespace FileManager.WPF.ViewModel
             {
                 //Определяем (отделяем) имя файла с расширением - без пути (но с слешем "\").
                 string filik = file.Substring(file.LastIndexOf('\\'), file.Length - file.LastIndexOf('\\'));
-                //Копируем файлик с перезаписью из источника в приёмник.
-                File.Copy(file, newPath + "\\" + fileName + "\\" + filik, true);
+
+                try
+                {
+                    //Копируем файлик с перезаписью из источника в приёмник.
+                    File.Copy(file, newPath + "\\" + fileName + "\\" + filik, true);
+                }
+                catch(Exception ex) { _logger.Error($"{ex} - ошибка при попытке доступа к файлу."); }
             }
         }
 

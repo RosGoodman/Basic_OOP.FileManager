@@ -53,8 +53,14 @@
                     <MenuItem Header="Cut" Click="CutFile_ButtonClick"/>
                     <MenuItem Header="Copy" Click="CopyFile_ButtonClick"/>
                     <MenuItem Header="Past" Click="PastFile_ButtonClick"/>
+                    <MenuItem Header="Delite" Click="Delete_ButtonClick"/>
                     <Separator/>
-                    <MenuItem Header="Get Info" Click="GetFileInfo_ButtonClick"/>
+                    <MenuItem Header="Properties" Click="GetFileInfo_ButtonClick"/>
+                    <Separator/>
+                    <MenuItem Header="Create">
+                        <MenuItem Header="Create file"/>
+                        <MenuItem Header="Create directory"/>
+                    </MenuItem>
                 </ContextMenu>
             </ListBox.ContextMenu>
             
