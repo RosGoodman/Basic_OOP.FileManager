@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace FileManager.WPF.ViewModel
 {
+    /// <summary> Класс описывающий ViewModel. </summary>
     public class FileManagerViewModel : BaseViewModel
     {
         #region feilds
@@ -31,25 +32,41 @@ namespace FileManager.WPF.ViewModel
 
         #region props
 
+        #region commands props
+
+        /// <summary> Комангда "создать файл" </summary>
         public RelayCommand CreateCommand { get; private set; }
+        /// <summary> Комангда "Открыть." </summary>
         public RelayCommand ListBoxItemEnterCommand { get; private set; }
+        /// <summary> Комангда "Перейти к родительской директории." </summary>
         public RelayCommand GoToPreviousDirCommand { get; private set; }
-        public RelayCommand ListBoxItemBackspaceCommand { get; private set; }
+        /// <summary> Комангда "Вырезать." </summary>
         public RelayCommand ListBoxItem_Ctrl_X_Command { get; private set; }
+        /// <summary> Комангда "Копировать." </summary>
         public RelayCommand ListBoxItem_Ctrl_C_Command { get; private set; }
+        /// <summary> Комангда "Вставтиь." </summary>
         public RelayCommand ListBoxItem_Ctrl_V_Command { get; private set; }
+        /// <summary> Комангда "Переименовать." </summary>
         public RelayCommand RenameFile_Command { get; private set; }
+        /// <summary> Комангда "Получить подробную информацию о фале." </summary>
         public RelayCommand GetFileInfoCommand { get; private set; }
+        /// <summary> Комангда "Найти." </summary>
         public RelayCommand FindCommand { get;private set; }
+
+        #endregion
+
+        #region any props
 
         /// <summary> Новое имя для переименования файла. </summary>
         public string NewFileName { get; set; }
 
+        /// <summary> Строка поиска. </summary>
         public string SearchLine { get; set; }
-
+        /// <summary> Путь к изображению кнопки "назад". </summary>
         public string BackImagePath { get => Path.GetFullPath("Images/previous.png"); }
-
+        /// <summary> подробная информация о текущем выбранном файле. </summary>
         public string[] SelectFileInfo { get; private set; }
+        /// <summary> Размер выбранного файла. </summary>
         public string SelectFileSize
         {
             get => _selectFileSize;
@@ -60,6 +77,7 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+        /// <summary> Строка краткой информащии о файле(внизу окна). </summary>
         public string FileInfo
         {
             get => _fileInfo;
@@ -70,6 +88,7 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+        /// <summary> Текущий выделенный файл. </summary>
         public BaseFile SelectedFile
         {
             get => _selectedFile;
@@ -83,6 +102,7 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+        /// <summary> Коллекция файлов текущей открытой директории. </summary>
         public ObservableCollection<BaseFile> AllFilesInCurrentDir
         {
             get => _directoryControl.AllFilesInDirectoiy;
@@ -93,6 +113,7 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+        /// <summary> Строка навигации. Полный путь текущей директории. </summary>
         public string CurrentPath
         {
             get => _currentPath;
@@ -103,6 +124,7 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+        /// <summary> Экземпляр текущей директории. </summary>
         public DirectoryModel CurrentDirectory
         {
             get => _currentDirectory;
@@ -115,8 +137,10 @@ namespace FileManager.WPF.ViewModel
 
         #endregion
 
-        /// <summary> CTOR </summary>
-        /// <param name="logger"></param>
+        #endregion
+
+        /// <summary> Конструктор FileManagerViewModel. </summary>
+        /// <param name="logger"> Логгер. </param>
         public FileManagerViewModel(ILogger logger)
         {
             //логгер
@@ -136,7 +160,6 @@ namespace FileManager.WPF.ViewModel
             CreateCommand = new RelayCommand(CreateFileCommand_Execute);
             ListBoxItemEnterCommand = new RelayCommand(OpenDir_Execute);
             GoToPreviousDirCommand = new RelayCommand(GoToPreviousDirectory_Command);
-            ListBoxItemBackspaceCommand = new RelayCommand(GoToPreviousDirectory_Command);
             ListBoxItem_Ctrl_X_Command = new RelayCommand(CutFile_Command);
             ListBoxItem_Ctrl_C_Command = new RelayCommand(CopyFile_Command);
             ListBoxItem_Ctrl_V_Command = new RelayCommand(PastFile_Command);
@@ -147,12 +170,14 @@ namespace FileManager.WPF.ViewModel
 
         #region commands
 
+        /// <summary> Создать файл. </summary>
         private void CreateFileCommand_Execute()
         {
             _logger.Info($"Зпауск команды {nameof(CreateFileCommand_Execute)}");
             _fileControl.Create("C:\\temp\\tt.txt");
         }
 
+        /// <summary> Открыть текущую выделенную директорию. </summary>
         private void OpenDir_Execute()
         {
             _logger.Info($"Зпауск команды {nameof(OpenDir_Execute)}");
@@ -169,6 +194,7 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+        /// <summary> Перейти к родительской директории. </summary>
         private void GoToPreviousDirectory_Command()
         {
             _logger.Info($"Зпауск команды {nameof(GoToPreviousDirectory_Command)}");
@@ -179,18 +205,21 @@ namespace FileManager.WPF.ViewModel
             RefreshList();
         }
 
+        /// <summary> Вырезать файл. </summary>
         private void CutFile_Command()
         {
             RemamberMovableFile();
             _movingFileCut = true;
         }
 
+        /// <summary> Копировать файл. </summary>
         private void CopyFile_Command()
         {
             RemamberMovableFile();
             _movingFileCut = false;
         }
 
+        /// <summary> Вставить файл. </summary>
         private async void PastFile_Command()
         {
             await Task.Run(() =>
@@ -211,6 +240,7 @@ namespace FileManager.WPF.ViewModel
             });
         }
 
+        /// <summary> Переименовать / переместить файл. </summary>
         private void MoveTo_Command()
         {
             if (SelectedFile.IsDirectory)
@@ -221,6 +251,7 @@ namespace FileManager.WPF.ViewModel
             RefreshList();
         }
 
+        /// <summary> Получить подробную информацию о фале. </summary>
         private async void GetFileInfo_Command()
         {
             SelectFileInfo = SelectedFile.GetInfo();
@@ -231,6 +262,7 @@ namespace FileManager.WPF.ViewModel
             });
         }
 
+        /// <summary> Найти файл. </summary>
         private async void Find_Command()
         {
 
@@ -240,6 +272,8 @@ namespace FileManager.WPF.ViewModel
 
         #region methods
 
+        /// <summary> Копировать файл. </summary>
+        /// <param name="fileControl"> Контроллер файлов. </param>
         private void Copy(IFileControl fileControl)
         {
             fileControl.Copy(_movableFile.Name, _movableFile.FullPath, CurrentDirectory.FullPath);
@@ -247,6 +281,7 @@ namespace FileManager.WPF.ViewModel
                 fileControl.Delete(_movableFile.FullPath);
         }
 
+        /// <summary> Обновить текущую открытую директорию. </summary>
         private void RefreshList()
         {
             //если директория с дисками, то переход в метод с driveInfo
@@ -259,12 +294,15 @@ namespace FileManager.WPF.ViewModel
             SelectedFile = AllFilesInCurrentDir[0];
         }
 
+        /// <summary> Запомнить купируемый/вырезанный файл. </summary>
         private void RemamberMovableFile()
         {
             if (SelectedFile == null) return;
             _movableFile = SelectedFile;
         }
 
+        /// <summary> Получить строку краткой информации о фале. </summary>
+        /// <returns> Строка с краткой информацей. </returns>
         private string GetFileInfo()
         {
             string[] infoArr = SelectedFile.FileInfo;
@@ -278,12 +316,16 @@ namespace FileManager.WPF.ViewModel
             return info;
         }
 
+        /// <summary> Конвертировать размер файла (KByte) в моксимально возможную величину
+        /// и вернуть в строчном виде с указанием размерности. </summary>
+        /// <param name="sizeInByte"> Размер в KByte. </param>
+        /// <returns> Строка с указанием величины и размерности (KByte/MB/GB/TB) </returns>
         private string ConvertByteSizeToString(decimal sizeInByte)
         {
             string sizeString = string.Empty;
             string postfix = "Byte";
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
                 if (sizeInByte > 1024)
                 {

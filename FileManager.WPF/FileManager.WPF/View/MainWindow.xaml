@@ -71,7 +71,7 @@
             <!--Привязка кнопок-->
             <ListBox.InputBindings>
                 <KeyBinding Gesture="Enter" Command="{Binding ListBoxItemEnterCommand}"/>
-                <KeyBinding Gesture="Backspace" Command="{Binding ListBoxItemBackspaceCommand}"/>
+                <KeyBinding Gesture="Backspace" Command="{Binding GoToPreviousDirCommand}"/>
                 <KeyBinding Gesture="Ctrl+X" Command="{Binding ListBoxItem_Ctrl_X_Command}"/>
                 <KeyBinding Gesture="Ctrl+C" Command="{Binding ListBoxItem_Ctrl_C_Command}"/>
                 <KeyBinding Gesture="Ctrl+V" Command="{Binding ListBoxItem_Ctrl_V_Command}"/>

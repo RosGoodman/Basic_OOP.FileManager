@@ -5,17 +5,22 @@ using System.IO;
 
 namespace FileManager.WPF.ViewModel
 {
+    /// <summary> Класс, описывающий контроллер файлов. </summary>
     internal class FileControl : AbstrctFileControl
     {
         private static ILogger _logger;
         private FileInfo _fileInfo;
 
+        /// <summary> Создание экземпляра класса. </summary>
+        /// <param name="logger"> Логгер. </param>
         public FileControl(ILogger logger)
         {
             _logger = logger;
             _logger.Debug("Создание экземпляра класса FileControl.");
         }
 
+        /// <summary> Создать файл. </summary>
+        /// <param name="path"> Полный путь создаваемого файла. </param>
         public override void Create(string path)
         {
             try
@@ -30,6 +35,10 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+        /// <summary> Копировать указанный файл. </summary>
+        /// <param name="fileName"> Имя копируемого файла. </param>
+        /// <param name="currentDir"> Полный путь текущей директории. </param>
+        /// <param name="newPath"> Полный путь новой директории. </param>
         public override void Copy(string fileName, string currentDir, string newPath)
         {
             try
@@ -44,6 +53,9 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+
+        /// <summary> Удалить указанный файл. </summary>
+        /// <param name="filePath"> Полный путь удаляемого файла. </param>
         public override void Delete(string filePath)
         {
             try
@@ -58,6 +70,9 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
+        /// <summary> Переместить / переименовать файл. </summary>
+        /// <param name="file"> Текущий полный путь файла. </param>
+        /// <param name="newPath"> Новй полный путь файла. </param>
         public override void MoveTo(string file, string newPath)
         {
             try
