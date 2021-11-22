@@ -128,7 +128,7 @@ namespace FileManager.WPF.ViewModel
             _fileControl = new FileControl(_logger);
 
             //чтение последнего файла
-            JSONFileReader fileReader = new JSONFileReader(_logger);
+            DirectoryReaderFromJSON fileReader = new DirectoryReaderFromJSON(_logger);
             CurrentDirectory = fileReader.GetLastDirectory();
             RefreshList();
 
@@ -226,7 +226,7 @@ namespace FileManager.WPF.ViewModel
             SelectFileInfo = SelectedFile.GetInfo();
             await Task.Run(() =>
             {
-                decimal sizeByte = SelectedFile.GetSize();
+                decimal sizeByte = SelectedFile.GetSizeKByte();
                 SelectFileSize = ConvertByteSizeToString(sizeByte);
             });
         }
@@ -271,7 +271,7 @@ namespace FileManager.WPF.ViewModel
             if (infoArr == null) return null;
 
             decimal size = 0;
-            if (!SelectedFile.IsDirectory) size = SelectedFile.GetSize();
+            if (!SelectedFile.IsDirectory) size = SelectedFile.GetSizeKByte();
             string sizeString = ConvertByteSizeToString(size);
 
             string info = $" Создан: {infoArr[2]}, Изменен: {infoArr[3]}{sizeString}";

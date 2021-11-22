@@ -4,24 +4,30 @@ using System.IO;
 
 namespace FileManager.WPF.Model
 {
+    /// <summary> Класс, описывающий файл. </summary>
     internal class FileModel : BaseFile
     {
+        private const string ImageIconFilePath = "Images/file.png";
         private FileInfo _fileInfo;
 
+        /// <summary> Создание экземпляра класса FileModel. </summary>
+        /// <param name="logger"> Логгер. </param>
+        /// <param name="filePath"> Полный путь к файлу. </param>
         public FileModel(ILogger logger, string filePath)
             : base(logger, filePath)
         {
             IsDirectory = false;
             SetFileInfo();
-            ImagePath = Path.GetFullPath("Images/file.png");
+            ImagePath = Path.GetFullPath(ImageIconFilePath);
         }
 
-        public override string[] GetInfo()
-        {
-            return FileInfo;
-        }
+        /// <summary> Получить список информацию о файле. </summary>
+        /// <returns> Массив с информацией. </returns>
+        public override string[] GetInfo() => FileInfo;
 
-        public override decimal GetSize()
+        /// <summary> Получить размер файла. </summary>
+        /// <returns> Получить размер файла KByte. </returns>
+        public override decimal GetSizeKByte()
         {
             _fileInfo = new FileInfo(_fullPath);
             if (_fileInfo.Exists)
@@ -33,6 +39,8 @@ namespace FileManager.WPF.Model
             return 0;
         }
 
+        /// <summary> Получить родительскую директорию. </summary>
+        /// <returns> Родительская директория. </returns>
         public override BaseFile GetParent()
         {
             _fileInfo = new FileInfo(FullPath);
@@ -40,12 +48,15 @@ namespace FileManager.WPF.Model
             return new BaseFile(parent.FullName);
         }
 
+        /// <summary> Строчное представление файла класса. </summary>
+        /// <returns> Имя файла. </returns>
         public override string ToString()
         {
             _fileInfo = new FileInfo(FullPath);
             return _fileInfo.Name;
         }
 
+        /// <summary> Установить информацию о файле. </summary>
         private void SetFileInfo()
         {
             _fileInfo = new FileInfo(_fullPath);

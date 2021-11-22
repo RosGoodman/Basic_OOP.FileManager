@@ -54,7 +54,7 @@ namespace FileManager.WPF.Model
 
         /// <summary> Получить размер файла. </summary>
         /// <returns> Размер файла KByte. </returns>
-        public virtual decimal GetSize() => 0;
+        public virtual decimal GetSizeKByte() => 0;
 
         /// <summary> Получить информацию о файле. </summary>
         /// <returns> Массив строк с данными о файле. </returns>

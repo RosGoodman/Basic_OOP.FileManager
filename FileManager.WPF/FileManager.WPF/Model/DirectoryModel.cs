@@ -9,11 +9,13 @@ using System.Linq;
 
 namespace FileManager.WPF.Model
 {
+    /// <summary> Класс, описывающий директриию. </summary>
     public class DirectoryModel : BaseFile , INotifyPropertyChanged
     {
         //не уверен, что так хорошо, но БЫСТРО другого способа отделить обычную директорию от списка с дисками не придумал
         /// <summary> Найменование назначающееся директории с дисками. </summary>
         public const string MainDriveDirectory = "MyComputer";
+        private const string ImageIconFilePath = "Images/folder.png";
 
         private DirectoryInfo _directoryFileInfo;
         private ObservableCollection<BaseFile> _subFiles;
@@ -31,7 +33,7 @@ namespace FileManager.WPF.Model
         {
             _logger = logger;
             LoadMainData(filePath);
-            ImagePath = Path.GetFullPath("Images/folder.png");
+            ImagePath = Path.GetFullPath(ImageIconFilePath);
         }
 
         /// <summary> Загрузить основные данные для текущей директории. </summary>
@@ -109,7 +111,7 @@ namespace FileManager.WPF.Model
 
         /// <summary> Получить размер текущей директории. </summary>
         /// <returns> Размер директории KByte. </returns>
-        public override decimal GetSize()
+        public override decimal GetSizeKByte()
         {
             decimal byteSize = SafeEnumerateFiles(_fullPath, "*.*", SearchOption.AllDirectories).Sum(n => new FileInfo(n).Length);
             decimal kByteSize = Math.Round(byteSize / 1024);
