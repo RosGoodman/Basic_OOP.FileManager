@@ -11,7 +11,7 @@ namespace FileManager.WPF.Model
 {
     public class DirectoryModel : BaseFile , INotifyPropertyChanged
     {
-        //не уверен, что так хорошо, но быстро другого способа отделить обычную директорию от списка с дисками не придумал
+        //не уверен, что так хорошо, но БЫСТРО другого способа отделить обычную директорию от списка с дисками не придумал
         /// <summary> Найменование назначающееся директории с дисками. </summary>
         public const string MainDriveDirectory = "MyComputer";
 
@@ -29,7 +29,7 @@ namespace FileManager.WPF.Model
         public DirectoryModel(ILogger logger, string filePath)
             : base(logger, filePath)
         {
-            logger = _logger;
+            _logger = logger;
             LoadMainData(filePath);
             ImagePath = Path.GetFullPath("Images/folder.png");
         }
@@ -62,7 +62,8 @@ namespace FileManager.WPF.Model
                     directoryes = Directory.GetDirectories(FullPath);
                     LoadDirectoryesToSubFiles(directoryes);
                 }
-                catch(UnauthorizedAccessException ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
+                catch(UnauthorizedAccessException ex) { _logger.Error($"{ex} - ошибка при попытке достпа к директории."); }
+                catch(Exception ex) { _logger.Error($"{ex} - ошибка при попытке достпа к директории."); }
 
                 try 
                 {
@@ -70,6 +71,7 @@ namespace FileManager.WPF.Model
                     AddFilesToSubFiles(files);
                 }
                 catch (UnauthorizedAccessException ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
+                catch (Exception ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
             }
         }
 
@@ -167,7 +169,7 @@ namespace FileManager.WPF.Model
                     }
                     catch(UnauthorizedAccessException ex)
                     {
-                        _logger.Error($"{ex} -нет доступа к директории.");
+                        _logger.Error($"{ex} - нет доступа к директории.");
                         continue;
                     }
                 }
@@ -232,7 +234,8 @@ namespace FileManager.WPF.Model
                         Name = new FileInfo(file).Name 
                     });
                 }
-                catch { }
+                catch (UnauthorizedAccessException ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
+                catch (Exception ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
             }
         }
 
@@ -255,10 +258,13 @@ namespace FileManager.WPF.Model
 
                     _subFiles.Add(baseFile);
                 }
-                catch { }
+                catch (UnauthorizedAccessException ex) { _logger.Error($"{ex} - ошибка при попытке достпа к директории."); }
+                catch (Exception ex) { _logger.Error($"{ex} - ошибка при попытке достпа к директории."); }
             }
         }
 
+        /// <summary> Получение директории "MyComputer" со списком дисков в виде обычной директории. </summary>
+        /// <returns> Директория "MyComputer". </returns>
         private BaseFile GetDirectoryMyComputerFromDrives()
         {
             DirectoryModel directory = new DirectoryModel(_logger, MainDriveDirectory)
