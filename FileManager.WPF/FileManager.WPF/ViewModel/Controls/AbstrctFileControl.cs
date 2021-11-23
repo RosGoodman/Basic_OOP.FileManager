@@ -22,6 +22,9 @@ namespace FileManager.WPF.ViewModel
             throw new System.NotImplementedException();
         }
 
+        /// <summary> Удалить файл. </summary>
+        /// <param name="dir"> Полный путь к файлу. </param>
+        /// <exception cref="System.NotImplementedException"></exception>
         public virtual void Delete(string dir)
         {
             throw new System.NotImplementedException();

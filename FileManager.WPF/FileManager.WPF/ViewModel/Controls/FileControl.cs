@@ -45,7 +45,7 @@ namespace FileManager.WPF.ViewModel
             {
                 _fileInfo = new FileInfo(currentDir);
                 if (_fileInfo.Exists)
-                    File.Copy(currentDir, newPath + "\\" + fileName, true);
+                    File.Copy(currentDir, $"{newPath}\\{fileName}", true);
             }
             catch(Exception ex)
             {
@@ -62,7 +62,7 @@ namespace FileManager.WPF.ViewModel
             {
                 _fileInfo = new FileInfo(filePath);
                 if (_fileInfo.Exists)
-                    File.Delete(filePath);
+                    _fileInfo.Delete();
             }
             catch(Exception ex)
             {

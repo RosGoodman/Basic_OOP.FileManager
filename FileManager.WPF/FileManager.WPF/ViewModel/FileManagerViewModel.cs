@@ -329,7 +329,7 @@ namespace FileManager.WPF.ViewModel
             if (!SelectedFile.IsDirectory) size = SelectedFile.GetSizeKByte();
             string sizeString = ConvertByteSizeToString(size);
 
-            string info = $" Создан: {infoArr[2]}, Изменен: {infoArr[3]}{sizeString}";
+            string info = $" Создан: {infoArr[2]}, Изменен: {infoArr[3]}{sizeString} ";
             return info;
         }
 

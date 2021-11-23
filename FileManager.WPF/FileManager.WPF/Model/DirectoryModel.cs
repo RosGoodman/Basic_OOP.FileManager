@@ -207,21 +207,6 @@ namespace FileManager.WPF.Model
             return _directoryFileInfo.Name;
         }
 
-        /// <summary> Добавить список директорий содержащихся в текущей. </summary>
-        /// <param name="dirs"> Добавляемые директории. </param>
-        //public void AddDirectoryesInSubFilesList(ObservableCollection<BaseFile> dirs)
-        //{
-        //    //if (_subFiles != null)
-        //    //    return;   //на всякий случай (метод нужен только для drives)
-        //    //else
-        //        _subFiles = new ObservableCollection<BaseFile>();
-
-        //    foreach (var dir in dirs)
-        //    {
-        //        _subFiles.Add(dir);
-        //    }
-        //}
-
         /// <summary> Добавить список файлов содержащихся в текущей директории. </summary>
         /// <param name="files"> Список файлов. </param>
         private void AddFilesToSubFiles(string[] files)

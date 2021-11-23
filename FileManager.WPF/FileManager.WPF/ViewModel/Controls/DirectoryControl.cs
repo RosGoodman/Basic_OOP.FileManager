@@ -35,15 +35,6 @@ namespace FileManager.WPF.ViewModel
 
         #region methods
 
-        ///// <summary> Получить массив с наименованиями директорий, содержащихся в текущей. </summary>
-        ///// <param name="dirName"> Полный путь к директории. </param>
-        ///// <returns> Массив  </returns>
-        //public static string[] GetDirectoryes(string dirName)
-        //{
-        //    _logger.Debug("Получение списка директорий.");
-        //    return Directory.GetDirectories(dirName);
-        //}
-
         /// <summary> Создать директорию по указанному пути. </summary>
         /// <param name="path"> Полный путь родительской директории. </param>
         public override void Create(string path)
@@ -98,9 +89,9 @@ namespace FileManager.WPF.ViewModel
         public override void Copy(string fileName, string copyDir, string newPath)
         {
             //Проверяем - если директории не существует, то создаём;
-            if (Directory.Exists(newPath + "\\" + fileName) != true)
+            if (Directory.Exists($"{newPath}\\{fileName}") != true)
             {
-                Directory.CreateDirectory(newPath + "\\" + fileName);
+                Directory.CreateDirectory($"{newPath}\\{fileName}");
             }
 
             RecursiveCopy(fileName, copyDir, newPath);
@@ -118,13 +109,13 @@ namespace FileManager.WPF.ViewModel
             foreach (DirectoryInfo dir in dir_inf.GetDirectories())
             {
                 //Проверяем - если директории не существует, то создаём;
-                if (Directory.Exists(newPath + "\\" + fileName + "\\" + dir.Name) != true)
+                if (Directory.Exists($"{newPath}\\{fileName}\\{dir.Name}") != true)
                 {
-                    Directory.CreateDirectory(newPath + "\\" + fileName + "\\" + dir.Name);
+                    Directory.CreateDirectory($"{newPath}\\{fileName}\\{dir.Name}");
                 }
 
                 //Рекурсия (перебираем вложенные папки и делаем для них то-же самое).
-                RecursiveCopy(dir.Name, dir.FullName, newPath + "\\" + fileName);
+                RecursiveCopy(dir.Name, dir.FullName, $"{newPath}\\{fileName}");
             }
 
             //Перебираем файлики в папке источнике.
@@ -136,7 +127,7 @@ namespace FileManager.WPF.ViewModel
                 try
                 {
                     //Копируем файлик с перезаписью из источника в приёмник.
-                    File.Copy(file, newPath + "\\" + fileName + "\\" + filik, true);
+                    File.Copy(file, $"{newPath}\\{fileName}\\{filik}", true);
                 }
                 catch(Exception ex) { _logger.Error($"{ex} - ошибка при попытке доступа к файлу."); }
             }
@@ -156,36 +147,6 @@ namespace FileManager.WPF.ViewModel
                 _logger.Error($"{ex} - ошибка при попытке создания дочерней директории.");
             }
         }
-
-        //void perebor_updates(string begin_dir, string end_dir)
-        //{
-        //    void perebor_updates(string begin_dir, string end_dir)
-        //    {
-        //        //Берём нашу исходную папку
-        //        DirectoryInfo dir_inf = new DirectoryInfo(begin_dir);
-        //        //Перебираем все внутренние папки
-        //        foreach (DirectoryInfo dir in dir_inf.GetDirectories())
-        //        {
-        //            //Проверяем - если директории не существует, то создаём;
-        //            if (Directory.Exists(end_dir + "\\" + dir.Name) != true)
-        //            {
-        //                Directory.CreateDirectory(end_dir + "\\" + dir.Name);
-        //            }
-
-        //            //Рекурсия (перебираем вложенные папки и делаем для них то-же самое).
-        //            perebor_updates(dir.FullName, end_dir + "\\" + dir.Name);
-        //        }
-
-        //        //Перебираем файлики в папке источнике.
-        //        foreach (string file in Directory.GetFiles(begin_dir))
-        //        {
-        //            //Определяем (отделяем) имя файла с расширением - без пути (но с слешем "\").
-        //            string filik = file.Substring(file.LastIndexOf('\\'), file.Length - file.LastIndexOf('\\'));
-        //            //Копируем файлик с перезаписью из источника в приёмник.
-        //            File.Copy(file, end_dir + "\\" + filik, true);
-        //        }
-        //    }
-        //}
 
         #endregion
     }
