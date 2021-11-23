@@ -94,6 +94,24 @@ namespace FileManager.WPF
             _viewModel.DeleteCommand.Execute(null);
         }
 
+        private void CreateFile_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogWindow dialogWindow = new DialogWindow(_viewModel);
+            dialogWindow.DataContext = _viewModel;
+            dialogWindow.ShowDialog();
+
+            _viewModel.CreateFileCommand.Execute(null);
+        }
+
+        private void CreateDirectory_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogWindow dialogWindow = new DialogWindow(_viewModel);
+            dialogWindow.DataContext = _viewModel;
+            dialogWindow.ShowDialog();
+
+            _viewModel.CreateDirectoryCommand.Execute(null);
+        }
+
         #endregion
     }
 }

@@ -34,8 +34,10 @@ namespace FileManager.WPF.ViewModel
 
         #region commands props
 
-        /// <summary> Комангда "создать файл" </summary>
-        public RelayCommand CreateCommand { get; private set; }
+        /// <summary> Комангда "Создать файл." </summary>
+        public RelayCommand CreateFileCommand { get; private set; }
+        /// <summary> Комангда "Создать директорию." </summary>
+        public RelayCommand CreateDirectoryCommand { get; private set; }
         /// <summary> Комангда "Открыть." </summary>
         public RelayCommand ListBoxItemEnterCommand { get; private set; }
         /// <summary> Комангда "Перейти к родительской директории." </summary>
@@ -159,7 +161,8 @@ namespace FileManager.WPF.ViewModel
             RefreshList();
 
             //подключение команд
-            CreateCommand = new RelayCommand(CreateFileCommand_Execute);
+            CreateFileCommand = new RelayCommand(CreateFileCommand_Execute);
+            CreateDirectoryCommand = new RelayCommand(CreateDirectoryCommand_Execute);
             ListBoxItemEnterCommand = new RelayCommand(OpenDir_Execute);
             GoToPreviousDirCommand = new RelayCommand(GoToPreviousDirectory_Command);
             ListBoxItem_Ctrl_X_Command = new RelayCommand(CutFile_Command);
@@ -174,14 +177,33 @@ namespace FileManager.WPF.ViewModel
         #region commands
 
         /// <summary> Создать файл. </summary>
-        private void CreateFileCommand_Execute()
+        /// <param name="param"> Параметр команды. </param>
+        private void CreateFileCommand_Execute(object param)
         {
             _logger.Info($"Зпауск команды {nameof(CreateFileCommand_Execute)}");
-            _fileControl.Create("C:\\temp\\tt.txt");
+            _fileControl.Create($"{CurrentDirectory.FullPath}\\{NewFileName}");
+
+            RefreshList();
+        }
+
+        /// <summary> Создать директорию. </summary>
+        /// <param name="param"> Параметр команды. </param>
+        private void CreateDirectoryCommand_Execute(object param)
+        {
+            _logger.Info($"Зпауск команды {nameof(CreateDirectoryCommand_Execute)}");
+            string delimeter = "";
+
+            if (CurrentDirectory.FullPath[CurrentDirectory.FullPath.Length - 1] != '\\')
+                delimeter = "\\";
+
+            _directoryControl.Create($@"{CurrentDirectory.FullPath}{delimeter}{NewFileName}");
+
+            RefreshList();
         }
 
         /// <summary> Открыть текущую выделенную директорию. </summary>
-        private void OpenDir_Execute()
+        /// <param name="param"> Параметр команды. </param>
+        private void OpenDir_Execute(object param)
         {
             _logger.Info($"Зпауск команды {nameof(OpenDir_Execute)}");
 
@@ -198,7 +220,8 @@ namespace FileManager.WPF.ViewModel
         }
 
         /// <summary> Перейти к родительской директории. </summary>
-        private void GoToPreviousDirectory_Command()
+        /// <param name="param"> Параметр команды. </param>
+        private void GoToPreviousDirectory_Command(object param)
         {
             _logger.Info($"Зпауск команды {nameof(GoToPreviousDirectory_Command)}");
 
@@ -209,21 +232,24 @@ namespace FileManager.WPF.ViewModel
         }
 
         /// <summary> Вырезать файл. </summary>
-        private void CutFile_Command()
+        /// <param name="param"> Параметр команды. </param>
+        private void CutFile_Command(object param)
         {
             RemamberMovableFile();
             _movingFileCut = true;
         }
 
         /// <summary> Копировать файл. </summary>
-        private void CopyFile_Command()
+        /// <param name="param"> Параметр команды. </param>
+        private void CopyFile_Command(object param)
         {
             RemamberMovableFile();
             _movingFileCut = false;
         }
 
         /// <summary> Вставить файл. </summary>
-        private async void PastFile_Command()
+        /// <param name="param"> Параметр команды. </param>
+        private async void PastFile_Command(object param)
         {
             await Task.Run(() =>
             {
@@ -244,9 +270,10 @@ namespace FileManager.WPF.ViewModel
         }
 
         /// <summary> Переименовать / переместить файл. </summary>
-        private void MoveTo_Command()
+        /// <param name="param"> Параметр команды. </param>
+        private void MoveTo_Command(object param)
         {
-            if (SelectedFile.IsDirectory)
+            if (!SelectedFile.IsDirectory)
                 _directoryControl.MoveTo(SelectedFile.FullPath, $"{SelectedFile.GetParent().FullPath}\\{NewFileName}");
             else
                 _fileControl.MoveTo(SelectedFile.FullPath, $"{SelectedFile.GetParent().FullPath}\\{NewFileName}");
@@ -255,7 +282,8 @@ namespace FileManager.WPF.ViewModel
         }
 
         /// <summary> Получить подробную информацию о фале. </summary>
-        private async void GetFileInfo_Command()
+        /// <param name="param"> Параметр команды. </param>
+        private async void GetFileInfo_Command(object param)
         {
             SelectFileInfo = SelectedFile.GetInfo();
             await Task.Run(() =>
@@ -266,13 +294,15 @@ namespace FileManager.WPF.ViewModel
         }
 
         /// <summary> Найти файл. </summary>
-        private async void Find_Command()
+        /// <param name="param"> Параметр команды. </param>
+        private async void Find_Command(object param)
         {
 
         }
 
         /// <summary> Удалить выбранный файл. </summary>
-        private async void Delete_Command()
+        /// <param name="param"> Параметр команды. </param>
+        private async void Delete_Command(object param)
         {
             await Task.Run(() =>
             {

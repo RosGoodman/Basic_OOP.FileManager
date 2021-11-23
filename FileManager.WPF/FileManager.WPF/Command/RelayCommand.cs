@@ -6,13 +6,16 @@ namespace FileManager.WPF.Command
     /// <summary>Класс реализующий интерфейс ICommand для создания WPF команд</summary>
     public class RelayCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
-        private readonly Action _execute;
+        private readonly Action<object> _execute;
+        public event EventHandler? CanExecuteChanged;
 
         /// <summary> Создание экземпляра реле команд. </summary>
         /// <param name="execute"> Выполняемый метод. </param>
-        public RelayCommand(Action execute)
+        public RelayCommand(Action<object> execute)
         {
+            if (execute == null)
+                throw new ArgumentNullException("execute");
+
             _execute = execute;
         }
 
@@ -28,7 +31,7 @@ namespace FileManager.WPF.Command
         /// <param name="parameter"> Параметр команды. </param>
         public void Execute(object? parameter)
         {
-            _execute.Invoke();
+            _execute(parameter);
         }
     }
 }

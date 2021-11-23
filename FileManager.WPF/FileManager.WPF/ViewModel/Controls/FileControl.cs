@@ -27,7 +27,7 @@ namespace FileManager.WPF.ViewModel
             {
                 _fileInfo = new FileInfo(path);
                 if (!_fileInfo.Exists)
-                    _fileInfo.Create();
+                    File.Create(path);
             }
             catch (Exception ex)
             {

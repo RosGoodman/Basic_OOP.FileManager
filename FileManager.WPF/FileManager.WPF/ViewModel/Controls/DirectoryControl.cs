@@ -42,7 +42,7 @@ namespace FileManager.WPF.ViewModel
             try
             {
                 _dirInfo = new DirectoryInfo(path);
-                if (_dirInfo.Exists)
+                if (!_dirInfo.Exists)
                     _dirInfo.Create();
             }
             catch (Exception ex)

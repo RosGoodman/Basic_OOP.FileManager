@@ -58,8 +58,8 @@
                     <MenuItem Header="Properties" Click="GetFileInfo_ButtonClick"/>
                     <Separator/>
                     <MenuItem Header="Create">
-                        <MenuItem Header="Create file"/>
-                        <MenuItem Header="Create directory"/>
+                        <MenuItem Header="Create file" Click="CreateFile_ButtonClick"/>
+                        <MenuItem Header="Create directory" Click="CreateDirectory_ButtonClick"/>
                     </MenuItem>
                 </ContextMenu>
             </ListBox.ContextMenu>
