@@ -31,5 +31,13 @@ namespace FileManager.WPF.View
         {
             this.DialogResult= false;
         }
+
+        /// <summary> Фокусировка на TextBox. </summary>
+        /// <param name="sender"> Источник. </param>
+        /// <param name="e"> Аргумент. </param>
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBox.Focus();
+        }
     }
 }

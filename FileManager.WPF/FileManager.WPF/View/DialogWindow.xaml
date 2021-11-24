@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileManager.WPF.View"
         mc:Ignorable="d"
-        Title="Новое имя файла." Height="120" Width="250">
+        Title="Новое имя файла." Height="120" Width="250" Loaded="Window_Loaded">
+    
     <Grid Background="#FF929292">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

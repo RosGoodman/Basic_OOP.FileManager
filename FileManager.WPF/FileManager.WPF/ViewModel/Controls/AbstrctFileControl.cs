@@ -1,7 +1,4 @@
 ﻿
-
-using System;
-
 namespace FileManager.WPF.ViewModel
 {
     /// <summary> Абстрактное представление контроллера файлов. </summary>
@@ -17,6 +14,9 @@ namespace FileManager.WPF.ViewModel
             throw new System.NotImplementedException();
         }
 
+        /// <summary> Создать файл. </summary>
+        /// <param name="path"> Полный путь файла. </param>
+        /// <exception cref="System.NotImplementedException"></exception>
         public virtual void Create(string path)
         {
             throw new System.NotImplementedException();

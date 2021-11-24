@@ -7,11 +7,12 @@
         xmlns:viewmodel="clr-namespace:FileManager.WPF.ViewModel" 
         d:DataContext="{d:DesignInstance Type=viewmodel:FileManagerViewModel}"
         mc:Ignorable="d"
-        Title="FileManager" Height="700" Width="1024" MinHeight="400" MinWidth="400">
+        Title="FileManager" Height="700" Width="1024" MinHeight="400" MinWidth="400" Closing="Window_Closing">
     
     <Grid Background="#FFC8C8C8">
-        
+
         <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="15"/>
@@ -23,17 +24,23 @@
         </Grid.ColumnDefinitions>
         
         <!--Header-->
-        <Button Grid.Column="0" Margin="5,3,0,3" Command="{Binding GoToPreviousDirCommand}" BorderBrush="{x:Null}">
+        <Button Grid.Column="2" Grid.Row="0" Width="20" Height="20" Margin="0,0,3,0" HorizontalAlignment="Right" Click="ShowAppInfoWindow_ButtonClick" BorderBrush="{x:Null}">
             <StackPanel>
-                <Image Width="22" Height="22" Source="{Binding Path=BackImagePath}"/>
+                <Image Width="15" Height="15" Source="{Binding Path=InfoImagePath}"/>
             </StackPanel>
         </Button>
-        <TextBox Margin="3" HorizontalAlignment="Stretch" Background="#FFEFEAEA" Grid.Column="1" Text="{Binding Path=CurrentPath}"/>
-        <TextBox Grid.Column="2" HorizontalAlignment="Stretch" Margin="0,3,5,3" MinWidth="100" KeyDown="TextBox_KeyDown" Background="#FFEFEAEA"
+        
+        <Button Grid.Column="0" Grid.Row="1" Margin="5,3,0,3" Command="{Binding GoToPreviousDirCommand}" BorderBrush="{x:Null}">
+            <StackPanel>
+                <Image Width="20" Height="20" Source="{Binding Path=BackImagePath}"/>
+            </StackPanel>
+        </Button>
+        <TextBox Margin="3" HorizontalAlignment="Stretch" Background="#FFEFEAEA" Grid.Row="1" Grid.Column="1" Text="{Binding Path=CurrentPath}"/>
+        <TextBox Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" Margin="0,3,5,3" MinWidth="100" KeyDown="TextBox_KeyDown" Background="#FFEFEAEA"
                  Text="{Binding Path=SearchLine, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         
         <!--Файлы текущей папки-->
-        <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="1"  Grid.ColumnSpan="3"
+        <ListBox Name="dirList" Margin="5,5,5,5" Grid.Row="2"  Grid.ColumnSpan="3"
                  ItemsSource="{Binding AllFilesInCurrentDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  SelectedItem="{Binding SelectedFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             
@@ -85,7 +92,7 @@
         </ListBox>
         
         <!--Информация о выбанном файле-->
-        <TextBlock FontSize="11" Grid.Row="2" Grid.ColumnSpan="3" Margin="5,-1,5,2" VerticalAlignment="Top"
+        <TextBlock FontSize="11" Grid.Row="3" Grid.ColumnSpan="3" Margin="5,-1,5,2" VerticalAlignment="Top"
                 Text="{Binding FileInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         </TextBlock>
     </Grid>

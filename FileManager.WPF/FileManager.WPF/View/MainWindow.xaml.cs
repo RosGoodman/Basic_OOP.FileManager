@@ -120,6 +120,20 @@ namespace FileManager.WPF
             _viewModel.CreateDirectoryCommand.Execute(null);
         }
 
-        #endregion
+        /// <summary> Событие закрытия окна. </summary>
+        /// <param name="sender"> Источник. </param>
+        /// <param name="e"> Аргумент. </param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _viewModel.SavePathAndCloseAppCommand.Execute(null);
+        }
+
+        private void ShowAppInfoWindow_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            AppInfoWindow appInfo = new AppInfoWindow();
+            appInfo.Show();
+        }
     }
+
+    #endregion
 }

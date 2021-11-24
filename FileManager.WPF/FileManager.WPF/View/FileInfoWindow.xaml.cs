@@ -8,12 +8,10 @@ namespace FileManager.WPF.View
     /// </summary>
     public partial class FileInfoWindow : Window
     {
-        private FileManagerViewModel _viewModel;
         public FileInfoWindow(FileManagerViewModel viewModel)
         {
             InitializeComponent();
-            _viewModel = viewModel;
-            DataContext = _viewModel;
+            DataContext = viewModel;
         }
     }
 }

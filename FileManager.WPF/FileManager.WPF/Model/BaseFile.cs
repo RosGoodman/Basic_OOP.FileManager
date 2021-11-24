@@ -24,7 +24,7 @@ namespace FileManager.WPF.Model
 
         /// <summary> Краткое наименование файла (имя.расширение). </summary>
         public string Name { get => _name; set => _name = value; }
-        
+
         /// <summary> Является ли файл папкой. </summary>
         internal bool IsDirectory { get; set; }
 

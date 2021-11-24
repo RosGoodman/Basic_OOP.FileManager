@@ -30,36 +30,38 @@ namespace FileManager.WPF.ViewModel
         private string _searchLine;
 
         #endregion
-
+        /////////////////////////////////////////////////////////////////////
         #region props
-
+        /////////////////////////////////////////////////////////////////////
         #region commands props
 
-        /// <summary> Комангда "Создать файл." </summary>
+        /// <summary> Команда "Создать файл". </summary>
         public RelayCommand CreateFileCommand { get; private set; }
-        /// <summary> Комангда "Создать директорию." </summary>
+        /// <summary> Команда "Создать директорию". </summary>
         public RelayCommand CreateDirectoryCommand { get; private set; }
-        /// <summary> Комангда "Открыть." </summary>
+        /// <summary> Команда "Открыть". </summary>
         public RelayCommand ListBoxItemEnterCommand { get; private set; }
-        /// <summary> Комангда "Перейти к родительской директории." </summary>
+        /// <summary> Команда "Перейти к родительской директории". </summary>
         public RelayCommand GoToPreviousDirCommand { get; private set; }
-        /// <summary> Комангда "Вырезать." </summary>
+        /// <summary> Команда "Вырезать". </summary>
         public RelayCommand ListBoxItem_Ctrl_X_Command { get; private set; }
-        /// <summary> Комангда "Копировать." </summary>
+        /// <summary> Команда "Копировать". </summary>
         public RelayCommand ListBoxItem_Ctrl_C_Command { get; private set; }
-        /// <summary> Комангда "Вставтиь." </summary>
+        /// <summary> Команда "Вставтиь". </summary>
         public RelayCommand ListBoxItem_Ctrl_V_Command { get; private set; }
-        /// <summary> Комангда "Переименовать." </summary>
+        /// <summary> Команда "Переименовать". </summary>
         public RelayCommand RenameFile_Command { get; private set; }
-        /// <summary> Комангда "Получить подробную информацию о фале." </summary>
+        /// <summary> Команда "Получить подробную информацию о фале". </summary>
         public RelayCommand GetFileInfoCommand { get; private set; }
-        /// <summary> Комангда "Найти." </summary>
+        /// <summary> Команда "Найти". </summary>
         public RelayCommand FindCommand { get;private set; }
-        /// <summary> Удалить выбранный файл. </summary>
+        /// <summary> Команда "удалить выбранный файл". </summary>
         public RelayCommand DeleteCommand { get;private set; }
+        /// <summary> Команда "Сохранить текущий путь директории." </summary>
+        public RelayCommand SavePathAndCloseAppCommand { get; private set; }
 
         #endregion
-
+        /////////////////////////////////////////////////////////////////////
         #region any props
 
         /// <summary> Новое имя для переименования файла. </summary>
@@ -75,6 +77,7 @@ namespace FileManager.WPF.ViewModel
                 //OnPropertyChanged("SerchLine");
             }
         }
+        public string InfoImagePath { get => Path.GetFullPath("Images/question.png"); }
         /// <summary> Путь к изображению кнопки "назад". </summary>
         public string BackImagePath { get => Path.GetFullPath("Images/previous.png"); }
         /// <summary> подробная информация о текущем выбранном файле. </summary>
@@ -154,7 +157,7 @@ namespace FileManager.WPF.ViewModel
         #endregion
 
         #endregion
-
+        /////////////////////////////////////////////////////////////////////
         /// <summary> Конструктор FileManagerViewModel. </summary>
         /// <param name="logger"> Логгер. </param>
         public FileManagerViewModel(ILogger logger)
@@ -168,8 +171,7 @@ namespace FileManager.WPF.ViewModel
             _fileControl = new FileControl(_logger);
 
             //чтение последнего файла
-            DirectoryReaderFromJSON fileReader = new DirectoryReaderFromJSON(_logger);
-            CurrentDirectory = fileReader.GetLastDirectory();
+            CurrentDirectory = new DirectoryModel(_logger, DirectoryReaderFromTXT.ReadDirectoryPath(_logger));
             RefreshList();
 
             //подключение команд
@@ -184,8 +186,10 @@ namespace FileManager.WPF.ViewModel
             GetFileInfoCommand = new RelayCommand(GetFileInfo_Command);
             FindCommand = new RelayCommand(Find_Command);
             DeleteCommand = new RelayCommand(Delete_Command);
+            SavePathAndCloseAppCommand = new RelayCommand(SavePathAndCloseApp_Command);
         }
 
+        ///////////////////////////////////////////////////////////////////////
         #region commands
 
         /// <summary> Создать файл. </summary>
@@ -337,8 +341,15 @@ namespace FileManager.WPF.ViewModel
             RefreshList();
         }
 
-        #endregion
+        /// <summary> Записать текущую директорию в файл JSON. </summary>
+        /// <param name="param"> Параметр команды. </param>
+        private void SavePathAndCloseApp_Command(object param)
+        {
+            DirectoryWriterToTXT.WriteLastPath(_logger, CurrentDirectory.FullPath);
+        }
 
+        #endregion
+        ///////////////////////////////////////////////////////////////////////
         #region methods
 
         /// <summary> Копировать файл. </summary>

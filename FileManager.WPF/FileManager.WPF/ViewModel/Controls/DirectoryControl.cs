@@ -4,7 +4,6 @@ using NLog;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Collections.Generic;
 
 namespace FileManager.WPF.ViewModel
 {

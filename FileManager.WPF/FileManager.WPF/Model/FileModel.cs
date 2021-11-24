@@ -4,8 +4,8 @@ using System.IO;
 
 namespace FileManager.WPF.Model
 {
-    /// <summary> Класс, описывающий файл. </summary>
-    internal class FileModel : BaseFile
+    /// <summary> Класс, описывающий файл/папку. </summary>
+    public class FileModel : BaseFile
     {
         private const string ImageIconFilePath = "Images/file.png";
         private FileInfo _fileInfo;
