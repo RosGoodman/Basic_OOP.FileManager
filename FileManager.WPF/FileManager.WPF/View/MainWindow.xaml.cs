@@ -41,6 +41,8 @@ namespace FileManager.WPF
             DialogWindow dialogWindow = new DialogWindow(_viewModel);
             dialogWindow.DataContext = _viewModel;
             dialogWindow.ShowDialog();
+
+            _viewModel.RenameFile_Command.Execute(null);
         }
 
         /// <summary> Вырезать файл. </summary>
@@ -52,7 +54,7 @@ namespace FileManager.WPF
         }
 
         /// <summary> Копировать файл. </summary>
-        //// <param name="sender"> Источник. </param>
+        /// <param name="sender"> Источник. </param>
         /// <param name="e"> Аргумент. </param>
         private void CopyFile_ButtonClick(object sender, RoutedEventArgs e)
         {
@@ -68,7 +70,7 @@ namespace FileManager.WPF
         }
 
         /// <summary> Открыть окно с информацией о файле. </summary>
-        //// <param name="sender"> Источник. </param>
+        /// <param name="sender"> Источник. </param>
         /// <param name="e"> Аргумент. </param>
         private void GetFileInfo_ButtonClick(object sender, RoutedEventArgs e)
         {
@@ -86,7 +88,7 @@ namespace FileManager.WPF
             if(e.Key == Key.Enter) _viewModel.FindCommand.Execute(null);
         }
 
-        /// <summary> Удалить  выбранный файл. </summary>
+        /// <summary> Удалить выбранный файл. </summary>
         /// <param name="sender"> Источник. </param>
         /// <param name="e"> Аргумент. </param>
         private void Delete_ButtonClick(object sender, RoutedEventArgs e)
@@ -94,6 +96,9 @@ namespace FileManager.WPF
             _viewModel.DeleteCommand.Execute(null);
         }
 
+        /// <summary> Создать файл. </summary>
+        /// <param name="sender"> Источник. </param>
+        /// <param name="e"> Аргумент. </param>
         private void CreateFile_ButtonClick(object sender, RoutedEventArgs e)
         {
             DialogWindow dialogWindow = new DialogWindow(_viewModel);
@@ -103,6 +108,9 @@ namespace FileManager.WPF
             _viewModel.CreateFileCommand.Execute(null);
         }
 
+        /// <summary> Создать директорию. </summary>
+        /// <param name="sender"> Источник. </param>
+        /// <param name="e"> Аргумент. </param>
         private void CreateDirectory_ButtonClick(object sender, RoutedEventArgs e)
         {
             DialogWindow dialogWindow = new DialogWindow(_viewModel);

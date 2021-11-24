@@ -27,6 +27,7 @@ namespace FileManager.WPF.ViewModel
 
         private BaseFile _movableFile;
         private bool _movingFileCut;    //вырезан / скопирован
+        private string _searchLine;
 
         #endregion
 
@@ -65,7 +66,15 @@ namespace FileManager.WPF.ViewModel
         public string NewFileName { get; set; }
 
         /// <summary> Строка поиска. </summary>
-        public string SearchLine { get; set; }
+        public string SearchLine
+        {
+            get => _searchLine;
+            set
+            {
+                _searchLine = value;
+                //OnPropertyChanged("SerchLine");
+            }
+        }
         /// <summary> Путь к изображению кнопки "назад". </summary>
         public string BackImagePath { get => Path.GetFullPath("Images/previous.png"); }
         /// <summary> подробная информация о текущем выбранном файле. </summary>
@@ -105,6 +114,9 @@ namespace FileManager.WPF.ViewModel
                 OnPropertyChanged("SelectedFile");
             }
         }
+
+        public string CreationTime { get; private set; }
+        public string LastWriteTime { get; private set; }
 
         /// <summary> Коллекция файлов текущей открытой директории. </summary>
         public ObservableCollection<BaseFile> AllFilesInCurrentDir
@@ -273,7 +285,7 @@ namespace FileManager.WPF.ViewModel
         /// <param name="param"> Параметр команды. </param>
         private void MoveTo_Command(object param)
         {
-            if (!SelectedFile.IsDirectory)
+            if (SelectedFile.IsDirectory)
                 _directoryControl.MoveTo(SelectedFile.FullPath, $"{SelectedFile.GetParent().FullPath}\\{NewFileName}");
             else
                 _fileControl.MoveTo(SelectedFile.FullPath, $"{SelectedFile.GetParent().FullPath}\\{NewFileName}");
@@ -288,6 +300,10 @@ namespace FileManager.WPF.ViewModel
             SelectFileInfo = SelectedFile.GetInfo();
             await Task.Run(() =>
             {
+                string[] info = SelectedFile.GetInfo();
+                CreationTime = info[2];
+                LastWriteTime = info[3];
+
                 decimal sizeByte = SelectedFile.GetSizeKByte();
                 SelectFileSize = ConvertByteSizeToString(sizeByte);
             });
@@ -297,7 +313,13 @@ namespace FileManager.WPF.ViewModel
         /// <param name="param"> Параметр команды. </param>
         private async void Find_Command(object param)
         {
+            await Task.Run(() => 
+            {
+                CurrentDirectory = _directoryControl.FileSearchByMask(CurrentDirectory.FullPath, SearchLine);
 
+                AllFilesInCurrentDir = CurrentDirectory.SubFiles;
+                if(AllFilesInCurrentDir.Count > 0) SelectedFile = AllFilesInCurrentDir[0];
+            });
         }
 
         /// <summary> Удалить выбранный файл. </summary>
@@ -338,7 +360,8 @@ namespace FileManager.WPF.ViewModel
                 CurrentDirectory.LoadSubDirectoryes();
 
             AllFilesInCurrentDir = CurrentDirectory.SubFiles;
-            SelectedFile = AllFilesInCurrentDir[0];
+            if(AllFilesInCurrentDir.Count > 0)
+                SelectedFile = AllFilesInCurrentDir[0];
         }
 
         /// <summary> Запомнить купируемый/вырезанный файл. </summary>

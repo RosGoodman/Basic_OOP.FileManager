@@ -19,7 +19,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="210"/>
         </Grid.ColumnDefinitions>
         
         <!--Header-->
@@ -29,7 +29,7 @@
             </StackPanel>
         </Button>
         <TextBox Margin="3" HorizontalAlignment="Stretch" Background="#FFEFEAEA" Grid.Column="1" Text="{Binding Path=CurrentPath}"/>
-        <TextBox Grid.Column="2" HorizontalAlignment="Center" Width="100" Margin="0,3,5,3" MinWidth="100" Height="26" KeyDown="TextBox_KeyDown"
+        <TextBox Grid.Column="2" HorizontalAlignment="Stretch" Margin="0,3,5,3" MinWidth="100" KeyDown="TextBox_KeyDown" Background="#FFEFEAEA"
                  Text="{Binding Path=SearchLine, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         
         <!--Файлы текущей папки-->

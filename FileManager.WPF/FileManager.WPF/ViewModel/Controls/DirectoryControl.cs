@@ -4,6 +4,7 @@ using NLog;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Collections.Generic;
 
 namespace FileManager.WPF.ViewModel
 {
@@ -133,7 +134,8 @@ namespace FileManager.WPF.ViewModel
             }
         }
 
-
+        /// <summary> Создать директорию по указанному пути. </summary>
+        /// <param name="subPath"> Полный путь новой директории. </param>
         public void CreateSubDirectory(string subPath)
         {
             try
@@ -147,6 +149,77 @@ namespace FileManager.WPF.ViewModel
                 _logger.Error($"{ex} - ошибка при попытке создания дочерней директории.");
             }
         }
+
+        #region search methods
+
+        /// <summary> Найти файлы и папки по маске в указанной директории. </summary>
+        /// <param name="directory"> Директория поиска. </param>
+        /// <param name="mask"> Маска файла. </param>
+        /// <returns> Условная директория с найденными файлами. </returns>
+        public DirectoryModel FileSearchByMask(string directory, string mask)
+        {
+            DirectoryModel newDir = new DirectoryModel(_logger, directory);
+
+            LoadFilesInCurrentDir_ForSearch(newDir, mask);
+            RecursiveSearch(newDir, mask);
+
+            return newDir;
+        }
+
+        /// <summary> Загрузить найденные по маске файлы из текущей директории. </summary>
+        /// <param name="newDir"> Текущая директория поиска. </param>
+        /// <param name="mask"> Маска файла. </param>
+        private void LoadFilesInCurrentDir_ForSearch(DirectoryModel newDir, string mask)
+        {
+            DirectoryInfo dir_inf = new DirectoryInfo(newDir.FullPath);
+
+            try
+            {
+                var thisDirs = Directory.GetDirectories(dir_inf.FullName, mask);
+                newDir.LoadDirectoryesToSubFiles(thisDirs);
+            }
+            catch (UnauthorizedAccessException ex) { _logger.Error($"{ex.Message} - ошибка при попытке доступа к файлу {dir_inf.FullName}"); }
+            try
+            {
+                newDir.LoadFilesToSubFiles(Directory.GetFiles(dir_inf.FullName, mask));
+            }
+            catch (UnauthorizedAccessException ex) { _logger.Error($"{ex.Message} - ошибка при попытке доступа к файлу {dir_inf.FullName}"); }
+        }
+
+        /// <summary> Рекурсивный поиск по вложенным директориям в указанной. </summary>
+        /// <param name="newDir"> Директория поиска. </param>
+        /// <param name="mask"> Маска файла. </param>
+        private void RecursiveSearch(DirectoryModel newDir, string mask)
+        {
+            DirectoryInfo dir_inf = new DirectoryInfo(newDir.FullPath);
+            DirectoryInfo[] dirs = null;
+
+            try { dirs = dir_inf.GetDirectories(); }
+            catch (UnauthorizedAccessException ex) 
+            {
+                _logger.Error($"{ex.Message} - ошибка при попытке доступа к файлу"); 
+                return;
+            }
+
+            foreach (DirectoryInfo dir in dirs)
+            {
+                try
+                {
+                    var thisDirs = Directory.GetDirectories(dir.FullName, mask);
+                    newDir.LoadDirectoryesToSubFiles(thisDirs);
+                }
+                catch(UnauthorizedAccessException ex) { _logger.Error($"{ex.Message} - ошибка при попытке доступа к файлу {dir.FullName}"); }
+                try
+                {
+                    newDir.LoadFilesToSubFiles(Directory.GetFiles(dir.FullName, mask));
+                }
+                catch (UnauthorizedAccessException ex) { _logger.Error($"{ex.Message} - ошибка при попытке доступа к файлу {dir.FullName}"); }
+
+                RecursiveSearch(new DirectoryModel(_logger, dir.FullName), mask);
+            }
+        }
+
+        #endregion
 
         #endregion
     }

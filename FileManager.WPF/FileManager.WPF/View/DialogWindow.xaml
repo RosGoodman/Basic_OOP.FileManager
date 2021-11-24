@@ -11,7 +11,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="38"/>
         </Grid.RowDefinitions>
-        <TextBox Height="25" Width="200" Background="Gainsboro" VerticalAlignment="Center" HorizontalAlignment="Center"
+        <TextBox x:Name="TextBox" Height="25" Width="200" Background="Gainsboro" VerticalAlignment="Center" HorizontalAlignment="Center"
                    Text="{Binding NewFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <WrapPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="7">
             <Button IsDefault="True" Click="Accept_Click" MinWidth="60" Margin="0,0,10,0">OK</Button>

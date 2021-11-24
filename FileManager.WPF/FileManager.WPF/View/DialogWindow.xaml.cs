@@ -21,7 +21,6 @@ namespace FileManager.WPF.View
         /// <param name="e"> Аргумент. </param>
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.RenameFile_Command.Execute(null);
             this.Close();
         }
 

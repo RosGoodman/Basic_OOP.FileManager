@@ -70,7 +70,7 @@ namespace FileManager.WPF.Model
                 try 
                 {
                     files = Directory.GetFiles(FullPath);
-                    AddFilesToSubFiles(files);
+                    LoadFilesToSubFiles(files);
                 }
                 catch (UnauthorizedAccessException ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
                 catch (Exception ex) { _logger.Error($"{ex} - ошибка при попытке достпа к файлу."); }
@@ -151,7 +151,7 @@ namespace FileManager.WPF.Model
         /// <param name="searchPattern">Шаблон поиска файлов</param>
         /// <param name="searchOption">Одно из значений перечисления SearchOption указывающее нужно ли выполнять поиск во вложенных каталогах или только в указанном каталоге</param>
         /// <returns>Возвращает перечисляемую коллекцию полных имен файлов</returns>
-        private static IEnumerable<string> SafeEnumerateFiles(string path, string searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        private IEnumerable<string> SafeEnumerateFiles(string path, string searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             var dirs = new Stack<string>();
             dirs.Push(path);
@@ -209,8 +209,9 @@ namespace FileManager.WPF.Model
 
         /// <summary> Добавить список файлов содержащихся в текущей директории. </summary>
         /// <param name="files"> Список файлов. </param>
-        private void AddFilesToSubFiles(string[] files)
+        public void LoadFilesToSubFiles(string[] files)
         {
+            if (_subFiles == null) _subFiles = new ObservableCollection<BaseFile>();
             foreach (string file in files)
             {
                 try
@@ -230,6 +231,8 @@ namespace FileManager.WPF.Model
         /// <param name="directoryes"> Список директорий. </param>
         public void LoadDirectoryesToSubFiles(string[] directoryes)
         {
+            if(_subFiles == null) _subFiles= new ObservableCollection<BaseFile>();
+
             foreach (string dir in directoryes)
             {
                 try
