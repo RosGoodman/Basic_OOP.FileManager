@@ -60,7 +60,7 @@
                     <MenuItem Header="Cut" Click="CutFile_ButtonClick"/>
                     <MenuItem Header="Copy" Click="CopyFile_ButtonClick"/>
                     <MenuItem Header="Past" Click="PastFile_ButtonClick"/>
-                    <MenuItem Header="Delite" Click="Delete_ButtonClick"/>
+                    <MenuItem Header="Delete" Click="Delete_ButtonClick"/>
                     <Separator/>
                     <MenuItem Header="Properties" Click="GetFileInfo_ButtonClick"/>
                     <Separator/>
