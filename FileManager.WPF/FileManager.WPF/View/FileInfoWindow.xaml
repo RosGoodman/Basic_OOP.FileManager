@@ -1,0 +1,54 @@
+﻿<Window x:Class="FileManager.WPF.View.FileInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileManager.WPF.View"
+        mc:Ignorable="d"
+        Title="Свойства файла." Height="300" Width="400" ResizeMode="NoResize">
+
+    <Grid Background="#FFC8C8C8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <!--1-->
+        <StackPanel Grid.Row="0" Grid.Column="0" Height="40" Width="40" HorizontalAlignment="Center" Margin="10, 3, 5, 4" Background="#FFD8D8D8">
+            <Image Width="40" Height="40" Source="{Binding Path=SelectedFile.ImagePath}"/>
+        </StackPanel>
+        <Border Grid.Column="1" Height="30" Width="160">
+            <TextBlock Text="{Binding SelectFileInfo[0]}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="#FFD8D8D8" FontSize="12"/>
+        </Border>
+        <!--2-->
+        <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12">Тип:</TextBlock>
+        <TextBlock Text="{Binding SelectFileInfo[4]}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12"></TextBlock>
+
+        <Separator Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"/>
+        <!--3-->
+        <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12">Расположение:</TextBlock>
+        <TextBox Text="{Binding SelectFileInfo[1]}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12" BorderBrush="{x:Null}" IsReadOnly="True"></TextBox>
+
+        <!--4-->
+        <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12">Размер:</TextBlock>
+        <TextBlock Text="{Binding SelectFileSize, Mode=OneWay}" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12"></TextBlock>
+
+        <Separator Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"/>
+
+        <!--5 пока не создана привязка-->
+        <TextBlock Grid.Column="0" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12">Создан:</TextBlock>
+        <TextBlock Text="{Binding CreationTime, Mode=OneWay}" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12"></TextBlock>
+
+        <!--6 пока не создана привязка-->
+        <TextBlock Grid.Column="0" Grid.Row="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12">Изменен:</TextBlock>
+        <TextBlock Text="{Binding LastWriteTime, Mode=OneWay}" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5 6" Background="#FFD8D8D8" FontSize="12"></TextBlock>
+    </Grid>
+</Window>
